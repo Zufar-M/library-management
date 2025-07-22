@@ -1,0 +1,40 @@
+### Java ###
+*.class
+*.jar
+*.war
+*.ear
+bin/
+build/
+out/
+target/
+
+### Eclipse ###
+.metadata/
+.settings/
+.project
+.classpath
+*.launch
+.factorypath
+
+### PostgreSQL ###
+*.sql
+/db/
+/database/
+
+### Logs ###
+*.log
+logs/
+
+### System ###
+.DS_Store
+Thumbs.db
+
+### Configuration files ###
+/src/main/resources/application.properties
+
+!/src/main/resources/application.properties.example
+
+/src/main/resources/application-*.properties
+
+### Thymeleaf cache ###
+/src/main/resources/templates/cache/
