@@ -1,24 +1,23 @@
 package io.github.zufarm.library.models;
 
 public class Person {
-	private String full_name;
-	private int birth_year;
+	private String fullName;
+	private int birthYear;
 	
-	public String getFull_name() {
-		return full_name;
+	public String getFullName() {
+		return fullName;
 	}
-	public void setFull_name(String full_name) {
-		this.full_name = full_name;
+	public void setFullName(String fullName) {
+		this.fullName = fullName;
 	}
-	public int getBirth_year() {
-		return birth_year;
+	public int getBirthYear() {
+		return birthYear;
 	}
-	public void setBirth_year(int birth_year) {
-		this.birth_year = birth_year;
+	public void setBirthYear(int birthYear) {
+		this.birthYear = birthYear;
 	}
-	public Person(String full_name, int birth_year) {
-		super();
-		this.full_name = full_name;
-		this.birth_year = birth_year;
+	public Person(String fullName, int birthYear) {
+		this.fullName = fullName;
+		this.birthYear = birthYear;
 	}
 }
