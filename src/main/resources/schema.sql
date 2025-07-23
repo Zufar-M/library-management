@@ -6,7 +6,7 @@ CREATE TABLE Person (
 
 CREATE TABLE Book (
     id SERIAL PRIMARY KEY,
-    title VARCHAR(200) NOT NULL,
+    name VARCHAR(200) NOT NULL,
     author VARCHAR(100) NOT NULL,
     year INTEGER NOT NULL CHECK (year > 0),
     person_id INTEGER REFERENCES Person(id) ON DELETE SET NULL
