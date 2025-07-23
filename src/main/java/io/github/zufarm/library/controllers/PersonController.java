@@ -3,6 +3,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -41,9 +42,16 @@ public class PersonController {
         return "redirect:/people";
     }
 	
+	@GetMapping("/{id}")
+    public String showOne(@PathVariable("id") int id, Model model) {
+		Person person = personDAO.showOne(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Person with this id not found"));
+        model.addAttribute("person", person);
+        return "people/one";
+    }
+	
 	@GetMapping("/{id}/edit")
     public String edit(Model model, @PathVariable("id") int id) {
-		Person person = personDAO.showOne(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Person not found"));
+		Person person = personDAO.showOne(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Person with this id not found"));
         model.addAttribute("person", person);
         return "people/edit";
     }
@@ -51,6 +59,12 @@ public class PersonController {
 	@PatchMapping("/{id}")
     public String update(@ModelAttribute("person")  Person person, @PathVariable("id") int id) {
         personDAO.update(id, person);
+        return "redirect:/people";
+    }
+	
+	@DeleteMapping("/{id}")
+    public String delete(@PathVariable("id") int id) {
+        personDAO.delete(id);
         return "redirect:/people";
     }
 	

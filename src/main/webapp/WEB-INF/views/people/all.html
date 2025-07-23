@@ -8,10 +8,14 @@
 
 <ul>
         <li th:each="person : ${people}">
+        <a th:href="@{/people/{id}(id=${person.getId()})}">
             <span th:text="${person.getFullName()}"></span> 
             (<span th:text="${person.getBirthYear()}"></span>)
+         </a>
         </li>
 </ul>
+
+<a href="/library/people/new">Create new person</a>
     
 </body>
 </html>
