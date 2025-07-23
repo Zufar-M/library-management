@@ -1,9 +1,16 @@
 package io.github.zufarm.library.models;
 
 public class Person {
+	private int id;
 	private String fullName;
 	private int birthYear;
 	
+	public int getId() {
+		return id;
+	}
+	public void setId(int id) {
+		this.id = id;
+	}
 	public String getFullName() {
 		return fullName;
 	}
@@ -16,13 +23,14 @@ public class Person {
 	public void setBirthYear(int birthYear) {
 		this.birthYear = birthYear;
 	}
-	public Person(String fullName, int birthYear) {
-		this.fullName = fullName;
-		this.birthYear = birthYear;
-	}
 	// For @ModelAttribute
 	public Person() {
 		
+	}
+	public Person(int id, String fullName, int birthYear) {
+		this.id = id;
+		this.fullName = fullName;
+		this.birthYear = birthYear;
 	}
 	
 }
