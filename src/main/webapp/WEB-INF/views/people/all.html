@@ -1,10 +1,17 @@
 <!DOCTYPE html>
-<html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
 <meta charset="UTF-8">
-<title>Insert title here</title>
+<title>All people</title>
 </head>
 <body>
-all people
+
+<ul>
+        <li th:each="person : ${people}">
+            <span th:text="${person.getFullName()}"></span> 
+            (<span th:text="${person.getBirthYear()}"></span>)
+        </li>
+</ul>
+    
 </body>
 </html>
