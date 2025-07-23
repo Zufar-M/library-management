@@ -27,14 +27,14 @@ public class BookDAO {
                 .stream().findFirst();
     }
 
-//    public void save(Book book) {
-//        jdbcTemplate.update("INSERT INTO Book(name, author, year) VALUES(?, ?, ?, ?)", book.getName(), book.getAuthor(), book.getYear());
-//    }
-//    
-//   public void update(int id, Book updatedBook) {
-//	   jdbcTemplate.update("UPDATE Book SET name=?, author=?, year=?, person_id=? WHERE id=?", updatedBook.getName(), 
-//			   													updatedBook.getAuthor(), updatedBook.getYear());
-//   }
+    public void save(Book book) {
+        jdbcTemplate.update("INSERT INTO Book(name, author, year) VALUES(?, ?, ?)", book.getName(), book.getAuthor(), book.getYear());
+    }
+    
+   public void update(int id, Book updatedBook) {
+	   jdbcTemplate.update("UPDATE Book SET name=?, author=?, year=? WHERE id=?", updatedBook.getName(), 
+			   													updatedBook.getAuthor(), updatedBook.getYear(), id);
+   }
    
    public void delete(int id) {
 	   jdbcTemplate.update("DELETE FROM Book WHERE id=?", id);
