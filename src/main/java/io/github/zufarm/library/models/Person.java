@@ -20,4 +20,9 @@ public class Person {
 		this.fullName = fullName;
 		this.birthYear = birthYear;
 	}
+	// For @ModelAttribute
+	public Person() {
+		
+	}
+	
 }
