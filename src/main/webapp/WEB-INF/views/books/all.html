@@ -1,22 +1,91 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-<meta charset="UTF-8">
-<title>All books</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Список книг</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        h1 {
+            color: #2c3e50;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+        }
+        .book-list {
+            list-style: none;
+            padding: 0;
+        }
+        .book-item {
+            background: white;
+            margin-bottom: 15px;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .book-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        }
+        .book-link {
+            text-decoration: none;
+            color: #2980b9;
+        }
+        .book-link:hover {
+            color: #3498db;
+        }
+        .book-title {
+            font-weight: 600;
+            font-size: 1.1em;
+            margin-bottom: 5px;
+            color: #2c3e50;
+        }
+        .book-details {
+            color: #7f8c8d;
+            font-size: 0.9em;
+        }
+        .book-details span {
+            display: inline-block;
+            margin-right: 15px;
+        }
+        .create-btn {
+            display: inline-block;
+            background: #2ecc71;
+            color: white;
+            padding: 10px 15px;
+            text-decoration: none;
+            border-radius: 5px;
+            margin-top: 20px;
+            transition: background 0.3s;
+        }
+        .create-btn:hover {
+            background: #27ae60;
+        }
+    </style>
 </head>
 <body>
-
-<ul>
-        <li th:each="book : ${books}">
-        <a th:href="@{/books/{id}(id=${book.getId()})}">
-            <span th:text="${book.getName()}"></span> 
-            <span th:text="${book.getAuthor()}"></span>
-            <span th:text="${book.getYear()}"></span>
-         </a>
-        </li>
-</ul>
-
-<a href="/library/books/new">Create new book</a>
+    <h1>Список книг в библиотеке</h1>
     
+    <ul class="book-list">
+        <li class="book-item" th:each="book : ${books}">
+            <a class="book-link" th:href="@{/books/{id}(id=${book.getId()})}">
+                <div class="book-title" th:text="${book.getName()}"></div>
+                <div class="book-details">
+                    <span th:text="${'Author: ' + book.getAuthor()}"></span>
+                    <span th:text="${'Year: ' + book.getYear()}"></span>
+                </div>
+            </a>
+        </li>
+    </ul>
+
+    <a class="create-btn" href="/library/books/new">Добавить новую книгу в библиотеку</a>
 </body>
 </html>
