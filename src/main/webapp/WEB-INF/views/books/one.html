@@ -22,7 +22,7 @@
         </form>
     </div>
     <div th:unless="${book.getPersonId() == null}">
-        <p>Книга занята</p>
+        <p th:text="'Книга занята, она сейчас у: ' + ${bookHolder.getFullName()}"></p>
         <br><br>
         <form th:action="@{/books/{id}/release(id=${book.id})}" method="post">
             <button type="submit">Освободить книгу</button>

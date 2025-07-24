@@ -15,6 +15,7 @@ import org.springframework.web.server.ResponseStatusException;
 import io.github.zufarm.library.dao.BookDAO;
 import io.github.zufarm.library.dao.PersonDAO;
 import io.github.zufarm.library.models.Book;
+import io.github.zufarm.library.models.Person;
 
 
 @Controller
@@ -51,6 +52,16 @@ public class BookController {
 		Book book = bookDAO.showOne(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Book with this id not found"));
         model.addAttribute("book", book);
         model.addAttribute("people", personDAO.showAll());
+        
+        //Logic of filtration of bookHolder
+        //May be placed in one.html, but it will require loop
+        //Thymeleaf cannot handle lambda to use stream api
+   
+        if (book.getPersonId() != null) {
+        	Person bookHolder = personDAO.showOne(book.getPersonId()).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Person with this id not found"));
+        	model.addAttribute("bookHolder", bookHolder);
+        }
+        
         return "books/one";
     }
 	
