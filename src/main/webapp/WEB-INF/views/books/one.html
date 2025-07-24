@@ -37,11 +37,6 @@
             color: #7f8c8d;
             margin-bottom: 20px;
         }
-        .book-id {
-            font-size: 14px;
-            color: #95a5a6;
-            margin-bottom: 30px;
-        }
         .status {
             padding: 15px;
             border-radius: 5px;
@@ -128,7 +123,6 @@
             <span th:text="${'Author: ' + book.getAuthor()}"></span> | 
             <span th:text="${'Year: ' + book.getYear()}"></span>
         </div>
-        <div class="book-id" th:text="${'ID: ' + book.getId()}"></div>
 
         <div th:if="${book.getPersonId() == null}" class="status status-available">
             Книга свободна

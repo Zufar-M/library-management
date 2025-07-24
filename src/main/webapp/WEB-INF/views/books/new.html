@@ -73,6 +73,13 @@
             color: #2980b9;
             text-decoration: underline;
         }
+		    .error-message {
+		    color: #dc3545;
+		    font-size: 0.875em;
+		    margin-top: 0.25rem;
+		    display: block;
+		}
+		
     </style>
 </head>
 <body>
@@ -81,17 +88,23 @@
     <form class="create-form" th:method="POST" th:action="@{/books}" th:object="${book}">
         <div class="form-group">
             <label for="name">Название книги:</label>
-            <input type="text" th:field="*{name}" id="name" placeholder="Введите название книги" required/>
+            <input type="text" th:field="*{name}" id="name" placeholder="Введите название книги" />
+            <small class="error-message" th:if="${#fields.hasErrors('name')}"
+            th:errors="*{name}"></small>
         </div>
         
         <div class="form-group">
             <label for="author">Автор:</label>
-            <input type="text" th:field="*{author}" id="author" placeholder="Введите автора книги" required/>
+            <input type="text" th:field="*{author}" id="author" placeholder="Введите автора книги" />
+            <small class="error-message" th:if="${#fields.hasErrors('author')}" 
+               th:errors="*{author}"></small>
         </div>
         
         <div class="form-group">
             <label for="year">Год издания:</label>
-            <input type="text" th:field="*{year}" id="year" placeholder="Введите год издания книги" required/>
+            <input type="text" th:field="*{year}" id="year" placeholder="Введите год издания книги" />
+            <small class="error-message" th:if="${#fields.hasErrors('year')}" 
+               th:errors="*{year}"></small>
         </div>
         
         <button type="submit" class="submit-btn">Добавить книгу в библиотеку</button>
