@@ -7,6 +7,29 @@
 <body>
 <p th:text="${book.getName() + ', ' + book.getAuthor() + ', ' + book.getYear()}">VALUE</p>
 <p th:text="${book.getId()}">VALUE</p>
+
+    <div th:if="${book.getPersonId() == null}">
+        <p>Книга свободна</p>
+        <form th:action="@{/books/{id}/assign(id=${book.id})}" method="post">
+            <select name="personId" required>
+                <option value="">Выбрать человека для книги</option>
+                <option th:each="person : ${people}"
+                        th:value="${person.getId()}"
+                        th:text="${person.getFullName()}">
+                </option>
+            </select>
+            <button type="submit">Назначить</button>
+        </form>
+    </div>
+    <div th:unless="${book.getPersonId() == null}">
+        <p th:text="'Книга занята, она сейчас у: ' + ${bookHolder.getFullName()}"></p>
+        <br><br>
+        <form th:action="@{/books/{id}/release(id=${book.id})}" method="post">
+            <button type="submit">Освободить книгу</button>
+        </form>
+    </div>
+    
+<br><br>
 <a th:href="@{/books/{id}/edit(id=${book.getId()})}">Edit book</a>
 <br><br>
 <form th:method="DELETE" th:action="@{/books/{id}(id=${book.getId()})}">

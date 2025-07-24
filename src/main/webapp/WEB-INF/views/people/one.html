@@ -6,7 +6,21 @@
 </head>
 <body>
 <p th:text="${person.getFullName() + ', ' + person.getBirthYear()}">VALUE</p>
-<p th:text="${person.getId()}">VALUE</p>
+
+<div th:if="${!personBooks.isEmpty()}">
+    <p>Книги этого человека:</p>
+    <ul>
+    <li th:each="book : ${personBooks}">
+        	<span th:text="${book.getName()}"></span> 
+            <span th:text="${book.getAuthor()}"></span>
+            <span th:text="${book.getYear()}"></span>
+    </li>
+    </ul>
+</div>
+<div th:if="${personBooks.isEmpty()}">
+    <p>У этого человека нет книг.</p>
+</div>
+
 <a th:href="@{/people/{id}/edit(id=${person.getId()})}">Edit person</a>
 <br><br>
 <form th:method="DELETE" th:action="@{/people/{id}(id=${person.getId()})}">
