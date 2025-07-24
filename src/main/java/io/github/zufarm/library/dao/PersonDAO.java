@@ -18,11 +18,11 @@ public class PersonDAO {
         this.jdbcTemplate = jdbcTemplate;
     }
     
-    public List<Person> showAll() {
+    public List<Person> findAll() {
     	return jdbcTemplate.query("SELECT * FROM Person", new BeanPropertyRowMapper<>(Person.class));
     }
     
-    public Optional<Person> showOne(int id) {
+    public Optional<Person> findById(int id) {
     	return jdbcTemplate.query("SELECT * FROM Person WHERE id=?", new BeanPropertyRowMapper<>(Person.class), id )
                 .stream().findFirst();
     }
@@ -31,12 +31,12 @@ public class PersonDAO {
         jdbcTemplate.update("INSERT INTO Person(full_name, birth_year) VALUES(?, ?)", person.getFullName(), person.getBirthYear());
     }
     
-   public void update(int id, Person updatedPerson) {
+   public void updateById(int id, Person updatedPerson) {
 	   jdbcTemplate.update("UPDATE Person SET full_name=?, birth_year=? WHERE id=?", updatedPerson.getFullName(),
                updatedPerson.getBirthYear(), id);
    }
    
-   public void delete(int id) {
+   public void deleteById(int id) {
 	   jdbcTemplate.update("DELETE FROM Person WHERE id=?", id);
    }
 }

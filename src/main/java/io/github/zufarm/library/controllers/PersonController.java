@@ -35,8 +35,8 @@ public class PersonController {
 	}
 
 	@GetMapping()
-	public String showPeople(Model model) {
-		model.addAttribute("people", personDAO.showAll());
+	public String getAllPeople(Model model) {
+		model.addAttribute("people", personDAO.findAll());
         return "people/all";
     }
 	
@@ -46,7 +46,7 @@ public class PersonController {
     }
 	
 	@PostMapping()
-    public String create(@ModelAttribute("person")  @Valid Person person, BindingResult bindingResult) {
+    public String addPerson(@ModelAttribute("person")  @Valid Person person, BindingResult bindingResult) {
 		if (bindingResult.hasErrors()) {
             return "people/new";
         }
@@ -55,13 +55,13 @@ public class PersonController {
     }
 	
 	@GetMapping("/{id}")
-    public String showOne(@PathVariable("id") int id, Model model) {
-		Person person = personDAO.showOne(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Person with this id not found"));
+    public String getPersonById(@PathVariable("id") int id, Model model) {
+		Person person = personDAO.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Person with this id not found"));
         model.addAttribute("person", person);
         
         //Logic of finding books given to person
         //This logic may be placed in BookDAO as alternative
-        List<Book> personBooks = bookDAO.showAll().stream().filter(book -> book.getPersonId() != null && book.getPersonId() == id).collect(Collectors.toList());
+        List<Book> personBooks = bookDAO.findAll().stream().filter(book -> book.getPersonId() != null && book.getPersonId() == id).collect(Collectors.toList());
         model.addAttribute("personBooks", personBooks);
         
         return "people/one";
@@ -70,23 +70,23 @@ public class PersonController {
 	
 	@GetMapping("/{id}/edit")
     public String edit(Model model, @PathVariable("id") int id) {
-		Person person = personDAO.showOne(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Person with this id not found"));
+		Person person = personDAO.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Person with this id not found"));
         model.addAttribute("person", person);
         return "people/edit";
     }
 	
 	@PatchMapping("/{id}")
-    public String update(@ModelAttribute("person")  @Valid Person person, BindingResult bindingResult, @PathVariable("id") int id) {
+    public String updatePerson(@ModelAttribute("person")  @Valid Person person, BindingResult bindingResult, @PathVariable("id") int id) {
 		if (bindingResult.hasErrors()) {
             return "people/edit";
         }
-        personDAO.update(id, person);
+        personDAO.updateById(id, person);
         return "redirect:/people";
     }
 	
 	@DeleteMapping("/{id}")
     public String delete(@PathVariable("id") int id) {
-        personDAO.delete(id);
+        personDAO.deleteById(id);
         return "redirect:/people";
     }
 	
