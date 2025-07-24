@@ -2,22 +2,114 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>New book</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Добавить книгу</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        h1 {
+            color: #2c3e50;
+            border-bottom: 2px solid #2ecc71;
+            padding-bottom: 10px;
+            margin-bottom: 30px;
+        }
+        .create-form {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+        input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+            box-sizing: border-box;
+            transition: border-color 0.3s;
+        }
+        input[type="text"]:focus {
+            border-color: #2ecc71;
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(46,204,113,0.2);
+        }
+        .submit-btn {
+            background-color: #2ecc71;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            font-size: 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .submit-btn:hover {
+            background-color: #27ae60;
+        }
+        .back-link {
+            display: inline-block;
+            margin-top: 20px;
+            color: #3498db;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        .back-link:hover {
+            color: #2980b9;
+            text-decoration: underline;
+        }
+		    .error-message {
+		    color: #dc3545;
+		    font-size: 0.875em;
+		    margin-top: 0.25rem;
+		    display: block;
+		}
+		
+    </style>
 </head>
 <body>
+    <h1>Добавить книгу в библиотеку</h1>
+    
+    <form class="create-form" th:method="POST" th:action="@{/books}" th:object="${book}">
+        <div class="form-group">
+            <label for="name">Название книги:</label>
+            <input type="text" th:field="*{name}" id="name" placeholder="Введите название книги" />
+            <small class="error-message" th:if="${#fields.hasErrors('name')}"
+            th:errors="*{name}"></small>
+        </div>
+        
+        <div class="form-group">
+            <label for="author">Автор:</label>
+            <input type="text" th:field="*{author}" id="author" placeholder="Введите автора книги" />
+            <small class="error-message" th:if="${#fields.hasErrors('author')}" 
+               th:errors="*{author}"></small>
+        </div>
+        
+        <div class="form-group">
+            <label for="year">Год издания:</label>
+            <input type="text" th:field="*{year}" id="year" placeholder="Введите год издания книги" />
+            <small class="error-message" th:if="${#fields.hasErrors('year')}" 
+               th:errors="*{year}"></small>
+        </div>
+        
+        <button type="submit" class="submit-btn">Добавить книгу в библиотеку</button>
+    </form>
 
-<form th:method="POST" th:action="@{/books}" th:object="${book}">
-    <label for="name">Enter name: </label>
-    <input type="text" th:field="*{name}" id="name"/>
-    <br/>
-    <label for="author">Enter author: </label>
-    <input type="text" th:field="*{author}" id="author"/>
-    <br/>
-    <label for="year">Enter year: </label>
-    <input type="text" th:field="*{year}" id="year"/>
-    <br/>
-    <input type="submit" value="Create!"/>
-</form>
-
+    <a class="back-link" th:href="@{/books}">← Назад к списку книг</a>
 </body>
 </html>

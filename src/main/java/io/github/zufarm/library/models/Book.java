@@ -1,11 +1,25 @@
 package io.github.zufarm.library.models;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 
 public class Book {
 	private Integer personId;
 	private int id;
+	
+	@NotBlank(message = "Название книги не может быть пустым")
+	@Size(min = 1, max = 100, message = "Название книги должно быть от 1 до 100 символов")
 	private String name;
+	
+	@NotBlank(message = "Поле автор не может быть пустым")
+	@Size(min = 1, max = 100, message = "Имя автора должно быть от 1 до 100 символов")
 	private String author;
+	
+	@Min(value = 1000, message = "Год издания должен быть не меньше 1000")
+    @Max(value = 2100, message = "Год издания должен быть не больше 2100")
 	private int year;
+	
 	public String getName() {
 		return name;
 	}
