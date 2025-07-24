@@ -1,6 +1,7 @@
 package io.github.zufarm.library.models;
 
 public class Book {
+	private Integer personId;
 	private int id;
 	private String name;
 	private String author;
@@ -29,11 +30,18 @@ public class Book {
 	public void setId(int id) {
 		this.id = id;
 	}
+	public Integer getPersonId() {
+		return personId;
+	}
+	public void setPersonId(Integer personId) {
+		this.personId = personId;
+	}
 	public Book(String name, String author, int year, int id) {
 		this.name = name;
 		this.author = author;
 		this.year = year;
 		this.id = id;
+		this.personId = null;
 	}
 	public Book() {
 		
