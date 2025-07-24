@@ -26,6 +26,11 @@ public class BookDAO {
     	return jdbcTemplate.query("SELECT * FROM Book WHERE id=?", new BeanPropertyRowMapper<>(Book.class), id )
                 .stream().findFirst();
     }
+    //Overload method for validation by name
+    public Optional<Book> showOne(String name) {
+    	return jdbcTemplate.query("SELECT * FROM Book WHERE name=?", new BeanPropertyRowMapper<>(Book.class), name )
+                .stream().findFirst();
+    }
 
     public void save(Book book) {
         jdbcTemplate.update("INSERT INTO Book(name, author, year) VALUES(?, ?, ?)", book.getName(), book.getAuthor(), book.getYear());
