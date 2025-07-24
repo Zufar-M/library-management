@@ -48,18 +48,31 @@
             color: #7f8c8d;
             font-size: 0.9em;
         }
-        .create-btn {
+        .action-buttons {
+            margin-top: 20px;
+            display: flex;
+            gap: 10px;
+        }
+        .btn {
             display: inline-block;
-            background: #2ecc71;
-            color: white;
             padding: 10px 15px;
             text-decoration: none;
             border-radius: 5px;
-            margin-top: 20px;
             transition: background 0.3s;
+        }
+        .create-btn {
+            background: #2ecc71;
+            color: white;
         }
         .create-btn:hover {
             background: #27ae60;
+        }
+        .books-btn {
+            background: #e67e22;
+            color: white;
+        }
+        .books-btn:hover {
+            background: #d35400;
         }
     </style>
 </head>
@@ -75,6 +88,9 @@
         </li>
     </ul>
 
-    <a class="create-btn" href="/library/people/new">Добавить нового читателя</a>
+    <div class="action-buttons">
+        <a class="btn create-btn" href="/library/people/new">Добавить читателя</a>
+        <a class="btn books-btn" href="/library/books">Список всех книг</a>
+    </div>
 </body>
 </html>
