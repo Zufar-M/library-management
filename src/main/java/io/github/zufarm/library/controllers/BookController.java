@@ -36,8 +36,8 @@ public class BookController {
 	}
 
 	@GetMapping()
-	public String showBooks(Model model) {
-		model.addAttribute("books", bookDAO.showAll());
+	public String getAllBooks(Model model) {
+		model.addAttribute("books", bookDAO.findAll());
         return "books/all";
     }
 	
@@ -47,7 +47,7 @@ public class BookController {
     }
 	
 	@PostMapping()
-    public String create(@ModelAttribute("book")  @Valid Book book, BindingResult bindingResult) {
+    public String addBook(@ModelAttribute("book")  @Valid Book book, BindingResult bindingResult) {
 		bookValidator.validate(book, bindingResult);
 		if (bindingResult.hasErrors()) {
             return "books/new";
@@ -57,58 +57,54 @@ public class BookController {
     }
 	
 	@GetMapping("/{id}")
-    public String showOne(@PathVariable("id") int id, Model model) {
-		Book book = bookDAO.showOne(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Book with this id not found"));
+    public String getBookById(@PathVariable("id") int id, Model model) {
+		Book book = bookDAO.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Book with this id not found"));
         model.addAttribute("book", book);
-        model.addAttribute("people", personDAO.showAll());
+        model.addAttribute("people", personDAO.findAll());
         
-        //Logic of filtration of bookHolder
-        //May be placed in one.html, but it will require loop
-        //Thymeleaf cannot handle lambda to use stream api
-        if (book.getPersonId() != null) {
-        	Person bookHolder = personDAO.showOne(book.getPersonId()).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Person with this id not found"));
-        	model.addAttribute("bookHolder", bookHolder);
-        }
         return "books/one";
     }
 	
 	@GetMapping("/{id}/edit")
     public String edit(Model model, @PathVariable("id") int id) {
-		Book book = bookDAO.showOne(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Book with this id not found"));
+		Book book = bookDAO.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Book with this id not found"));
         model.addAttribute("book", book);
+
         return "books/edit";
     }
 	
 	@PatchMapping("/{id}")
-    public String update(@ModelAttribute("book")  @Valid Book book, BindingResult bindingResult, @PathVariable("id") int id) {
+    public String updateBook(@ModelAttribute("book")  @Valid Book book, BindingResult bindingResult, @PathVariable("id") int id) {
 		bookValidator.validate(book, bindingResult);
 		if (bindingResult.hasErrors()) {
             return "books/edit";
         }
-        bookDAO.update(id, book);
+		Person bookHolder = bookDAO.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Book with this id not found")).getBookHolder();
+        book.setBookHolder(bookHolder);
+		bookDAO.updateById(id, book);
         return "redirect:/books";
     }
 	
 	@DeleteMapping("/{id}")
     public String delete(@PathVariable("id") int id) {
-		bookDAO.delete(id);
+		bookDAO.deleteById(id);
         return "redirect:/books";
     }
 	
 	@PostMapping("/{id}/assign")
 	public String assign(@PathVariable("id") int bookId, @RequestParam("personId") int personId) {
-		Book book = bookDAO.showOne(bookId).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Book with this id not found"));
-		book.setPersonId(personId);
-		bookDAO.update(bookId, book);
+		Book book = bookDAO.findById(bookId).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Book with this id not found"));
+		book.setBookHolder(personDAO.findById(personId).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Book with this id not found")));
+		bookDAO.updateById(bookId, book);
         return "redirect:/books/" + bookId;
-        
     }
 	@PostMapping("/{id}/release")
 	public String release(@PathVariable("id") int bookId) {
-		Book book = bookDAO.showOne(bookId).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Book with this id not found"));
-		book.setPersonId(null);
-		bookDAO.update(bookId, book);
+		Book book = bookDAO.findById(bookId).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Book with this id not found"));
+		book.setBookHolder(null);
+		bookDAO.updateById(bookId, book);
         return "redirect:/books/" + bookId;
+        
         
     }
 }

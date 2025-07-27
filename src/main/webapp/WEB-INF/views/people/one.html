@@ -102,7 +102,7 @@
     <div class="actions">
         <a class="action-btn edit-btn" th:href="@{/people/{id}/edit(id=${person.getId()})}">Изменить данные о читателе</a>
         <form style="display: inline;" th:method="DELETE" th:action="@{/people/{id}(id=${person.getId()})}">
-            <input class="action-btn delete-btn" type="submit" value="Удалить"/>
+            <input class="action-btn delete-btn" type="submit" value="Удалить читателя"/>
         </form>
     </div>
 </body>

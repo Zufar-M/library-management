@@ -1,47 +1,69 @@
 package io.github.zufarm.library.dao;
-
 import java.util.List;
 import java.util.Optional;
+
+import org.hibernate.Hibernate;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 import io.github.zufarm.library.models.Book;
 
 @Repository
 public class BookDAO {
 	
-    private final JdbcTemplate jdbcTemplate;
+	private final SessionFactory sessionFactory;
 
+    
     @Autowired
-    public BookDAO(JdbcTemplate jdbcTemplate) {
-        this.jdbcTemplate = jdbcTemplate;
+    public BookDAO(SessionFactory sessionFactory) {
+		this.sessionFactory = sessionFactory;
+	}
+    @Transactional(readOnly = true)
+    public List<Book> findAll() {
+    	Session session = sessionFactory.getCurrentSession();
+    	 
+    	List<Book> books = session.createQuery("FROM Book", Book.class).getResultList();
+    	
+    	return books;
     }
     
-    public List<Book> showAll() {
-    	return jdbcTemplate.query("SELECT * FROM Book", new BeanPropertyRowMapper<>(Book.class));
+    @Transactional(readOnly = true)
+    public Optional<Book> findById(int id) {
+    	Session session = sessionFactory.getCurrentSession();
+    	Book book = session.find(Book.class, id);
+    	Hibernate.initialize(book.getBookHolder());
+    	return Optional.ofNullable(book);
     }
     
-    public Optional<Book> showOne(int id) {
-    	return jdbcTemplate.query("SELECT * FROM Book WHERE id=?", new BeanPropertyRowMapper<>(Book.class), id )
-                .stream().findFirst();
+    //Method for validation by name
+    @Transactional(readOnly = true)
+    public Optional<Book> findByName(String name) {
+    	    Session session = sessionFactory.getCurrentSession();
+    	    Book book = session.createQuery("FROM Book WHERE name = :name", Book.class)
+    	                      .setParameter("name", name)
+    	                      .uniqueResult();
+    	    return Optional.ofNullable(book);
     }
-    //Overload method for validation by name
-    public Optional<Book> showOne(String name) {
-    	return jdbcTemplate.query("SELECT * FROM Book WHERE name=?", new BeanPropertyRowMapper<>(Book.class), name )
-                .stream().findFirst();
-    }
-
+    @Transactional
     public void save(Book book) {
-        jdbcTemplate.update("INSERT INTO Book(name, author, year) VALUES(?, ?, ?)", book.getName(), book.getAuthor(), book.getYear());
+    	Session session = sessionFactory.getCurrentSession();
+    	session.persist(book);
     }
-    
-   public void update(int id, Book updatedBook) {
-	   jdbcTemplate.update("UPDATE Book SET name=?, author=?, year=?, person_id=? WHERE id=?", updatedBook.getName(), 
-			   													updatedBook.getAuthor(), updatedBook.getYear(), updatedBook.getPersonId(), id);
+   @Transactional
+   public void updateById(int id, Book updatedBook) {
+	   Session session = sessionFactory.getCurrentSession();
+	   Book bookToBeUpdated = session.find(Book.class, id);
+	   bookToBeUpdated.setName(updatedBook.getName());
+	   bookToBeUpdated.setYear(updatedBook.getYear());
+	   bookToBeUpdated.setAuthor(updatedBook.getAuthor());
+	   bookToBeUpdated.setBookHolder(updatedBook.getBookHolder());
+   }
+   @Transactional
+   public void deleteById(int id) {
+	   Session session = sessionFactory.getCurrentSession();
+	   session.remove(session.find(Book.class, id));
    }
    
-   public void delete(int id) {
-	   jdbcTemplate.update("DELETE FROM Book WHERE id=?", id);
-   }
 }

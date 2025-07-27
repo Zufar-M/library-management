@@ -77,7 +77,7 @@
     <h1>Редактировать информацию о книге</h1>
     
     <form class="edit-form" th:method="PATCH" th:action="@{/books/{id}(id=${book.getId()})}" th:object="${book}">
-        <input type="hidden" class="hidden-field" th:field="*{personId}"/>
+    	<input type="hidden" name="_method" value="patch" />
         
         <div class="form-group">
             <label for="name">Название книги:</label>
