@@ -13,7 +13,7 @@
     <java.version>17</java.version>
     <maven.compiler.source>${java.version}</maven.compiler.source>
     <maven.compiler.target>${java.version}</maven.compiler.target>
-    <spring.version>6.1.5</spring.version>
+    <spring.version>7.0.0-M7</spring.version>
   </properties>
 
   <dependencies>
@@ -106,7 +106,13 @@
 	    <version>3.6.1.Final</version>
 	</dependency>
 
-
+	
+	<dependency>
+	    <groupId>org.springframework.data</groupId>
+	    <artifactId>spring-data-jpa</artifactId>
+	    <version>4.0.0-M4</version>
+	</dependency>
+	
 	 </dependencies>
 
   <build>
