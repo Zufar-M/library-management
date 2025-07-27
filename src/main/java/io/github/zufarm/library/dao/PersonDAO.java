@@ -43,9 +43,14 @@ public class PersonDAO {
     }
     
    @Transactional
-   public void update(Person updatedPerson) {
+   public void updateById(int id, Person updatedPerson) {
 	   Session session = sessionFactory.getCurrentSession();
-	   session.merge(updatedPerson);
+	   Person personToBeUpdated = session.find(Person.class, id);
+	   
+	   personToBeUpdated.setFullName(updatedPerson.getFullName());
+	   personToBeUpdated.setBirthYear(updatedPerson.getBirthYear());
+	   personToBeUpdated.setBooks(updatedPerson.getBooks());
+	   
    }
    @Transactional
    public void deleteById(int id) {

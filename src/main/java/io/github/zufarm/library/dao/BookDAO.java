@@ -1,6 +1,8 @@
 package io.github.zufarm.library.dao;
 import java.util.List;
 import java.util.Optional;
+
+import org.hibernate.Hibernate;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +33,7 @@ public class BookDAO {
     public Optional<Book> findById(int id) {
     	Session session = sessionFactory.getCurrentSession();
     	Book book = session.find(Book.class, id);
+    	Hibernate.initialize(book.getBookHolder());
     	return Optional.ofNullable(book);
     }
     
@@ -49,9 +52,13 @@ public class BookDAO {
     	session.persist(book);
     }
    @Transactional
-   public void update(Book updatedBook) {
+   public void updateById(int id, Book updatedBook) {
 	   Session session = sessionFactory.getCurrentSession();
-	   session.merge(updatedBook);
+	   Book bookToBeUpdated = session.find(Book.class, id);
+	   bookToBeUpdated.setName(updatedBook.getName());
+	   bookToBeUpdated.setYear(updatedBook.getYear());
+	   bookToBeUpdated.setAuthor(updatedBook.getAuthor());
+	   bookToBeUpdated.setBookHolder(updatedBook.getBookHolder());
    }
    @Transactional
    public void deleteById(int id) {
