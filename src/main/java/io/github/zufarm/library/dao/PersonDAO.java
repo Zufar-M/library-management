@@ -2,24 +2,35 @@ package io.github.zufarm.library.dao;
 
 import java.util.List;
 import java.util.Optional;
+
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
+
 import io.github.zufarm.library.models.Person;
 
 @Repository
 public class PersonDAO {
 	
-    private final JdbcTemplate jdbcTemplate;
+    private final SessionFactory sessionFactory;
 
-    @Autowired
-    public PersonDAO(JdbcTemplate jdbcTemplate) {
-        this.jdbcTemplate = jdbcTemplate;
-    }
     
-    public List<Person> findAll() {
-    	return jdbcTemplate.query("SELECT * FROM Person", new BeanPropertyRowMapper<>(Person.class));
+    @Autowired
+    public PersonDAO(SessionFactory sessionFactory) {
+		this.sessionFactory = sessionFactory;
+	}
+    
+    @Transactional(readOnly = true)
+	public List<Person> findAll() {
+    	Session session = sessionFactory.getCurrentSession();
+ 
+    	List<Person> people = session.createQuery("select from Person", Person.class).getResultList();
+    	
+    	return people;
     }
     
     public Optional<Person> findById(int id) {
