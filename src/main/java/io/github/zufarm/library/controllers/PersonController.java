@@ -1,7 +1,4 @@
 package io.github.zufarm.library.controllers;
-import java.util.List;
-import java.util.stream.Collectors;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
@@ -15,9 +12,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.server.ResponseStatusException;
-import io.github.zufarm.library.dao.BookDAO;
 import io.github.zufarm.library.dao.PersonDAO;
-import io.github.zufarm.library.models.Book;
 import io.github.zufarm.library.models.Person;
 import jakarta.validation.Valid;
 
@@ -25,18 +20,17 @@ import jakarta.validation.Valid;
 @RequestMapping("/people")
 public class PersonController {
 	
-	private final BookDAO bookDAO;
 	private final PersonDAO personDAO;
 	
 	@Autowired
-	public PersonController(BookDAO bookDAO, PersonDAO personDAO) {
-		this.bookDAO = bookDAO;
+	public PersonController(PersonDAO personDAO) {
 		this.personDAO = personDAO;
 	}
 
 	@GetMapping()
 	public String getAllPeople(Model model) {
 		model.addAttribute("people", personDAO.findAll());
+		System.out.println("ALL");
         return "people/all";
     }
 	
@@ -58,12 +52,7 @@ public class PersonController {
     public String getPersonById(@PathVariable("id") int id, Model model) {
 		Person person = personDAO.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Person with this id not found"));
         model.addAttribute("person", person);
-        
-        //Logic of finding books given to person
-        //This logic may be placed in BookDAO as alternative
-        List<Book> personBooks = bookDAO.findAll().stream().filter(book -> book.getPersonId() != null && book.getPersonId() == id).collect(Collectors.toList());
-        model.addAttribute("personBooks", personBooks);
-        
+        model.addAttribute("personBooks", person.getBooks());
         return "people/one";
         
     }
@@ -76,11 +65,11 @@ public class PersonController {
     }
 	
 	@PatchMapping("/{id}")
-    public String updatePerson(@ModelAttribute("person")  @Valid Person person, BindingResult bindingResult, @PathVariable("id") int id) {
+    public String updatePerson(@ModelAttribute("person")  @Valid Person person, BindingResult bindingResult) {
 		if (bindingResult.hasErrors()) {
             return "people/edit";
         }
-        personDAO.updateById(id, person);
+        personDAO.update(person);
         return "redirect:/people";
     }
 	

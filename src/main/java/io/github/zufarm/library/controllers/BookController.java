@@ -16,7 +16,6 @@ import org.springframework.web.server.ResponseStatusException;
 import io.github.zufarm.library.dao.BookDAO;
 import io.github.zufarm.library.dao.PersonDAO;
 import io.github.zufarm.library.models.Book;
-import io.github.zufarm.library.models.Person;
 import io.github.zufarm.library.util.BookValidator;
 import jakarta.validation.Valid;
 
@@ -62,13 +61,6 @@ public class BookController {
         model.addAttribute("book", book);
         model.addAttribute("people", personDAO.findAll());
         
-        //Logic of filtration of bookHolder
-        //May be placed in one.html, but it will require loop
-        //Thymeleaf cannot handle lambda to use stream api
-        if (book.getPersonId() != null) {
-        	Person bookHolder = personDAO.findById(book.getPersonId()).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Person with this id not found"));
-        	model.addAttribute("bookHolder", bookHolder);
-        }
         return "books/one";
     }
 	
@@ -80,12 +72,12 @@ public class BookController {
     }
 	
 	@PatchMapping("/{id}")
-    public String updateBook(@ModelAttribute("book")  @Valid Book book, BindingResult bindingResult, @PathVariable("id") int id) {
+    public String updateBook(@ModelAttribute("book")  @Valid Book book, BindingResult bindingResult) {
 		bookValidator.validate(book, bindingResult);
 		if (bindingResult.hasErrors()) {
             return "books/edit";
         }
-        bookDAO.updateById(id, book);
+        bookDAO.update(book);
         return "redirect:/books";
     }
 	
@@ -98,17 +90,17 @@ public class BookController {
 	@PostMapping("/{id}/assign")
 	public String assign(@PathVariable("id") int bookId, @RequestParam("personId") int personId) {
 		Book book = bookDAO.findById(bookId).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Book with this id not found"));
-		book.setPersonId(personId);
-		bookDAO.updateById(bookId, book);
+		book.setBookHolder(personDAO.findById(personId).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Book with this id not found")));
+		bookDAO.update(book);
         return "redirect:/books/" + bookId;
-        
     }
 	@PostMapping("/{id}/release")
 	public String release(@PathVariable("id") int bookId) {
 		Book book = bookDAO.findById(bookId).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Book with this id not found"));
-		book.setPersonId(null);
-		bookDAO.updateById(bookId, book);
+		book.setBookHolder(null);
+		bookDAO.update(book);
         return "redirect:/books/" + bookId;
+        
         
     }
 }

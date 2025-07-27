@@ -31,13 +31,8 @@ logs/
 Thumbs.db
 
 ### Configuration files ###
-/src/main/resources/application.properties
-
-!/src/main/resources/application.properties.example
-
-
-
-/src/main/resources/application-*.properties
+/src/main/resources/hibernate.properties
+!/src/main/resources/hibernate.properties.example
 
 ### Thymeleaf cache ###
 /src/main/resources/templates/cache/

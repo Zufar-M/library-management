@@ -1,42 +1,55 @@
 package io.github.zufarm.library.dao;
-
 import java.util.List;
 import java.util.Optional;
+
+import org.hibernate.Hibernate;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 import io.github.zufarm.library.models.Person;
 
 @Repository
 public class PersonDAO {
 	
-    private final JdbcTemplate jdbcTemplate;
+    private final SessionFactory sessionFactory;
 
+    
     @Autowired
-    public PersonDAO(JdbcTemplate jdbcTemplate) {
-        this.jdbcTemplate = jdbcTemplate;
-    }
+    public PersonDAO(SessionFactory sessionFactory) {
+		this.sessionFactory = sessionFactory;
+	}
     
-    public List<Person> findAll() {
-    	return jdbcTemplate.query("SELECT * FROM Person", new BeanPropertyRowMapper<>(Person.class));
+    @Transactional(readOnly = true)
+	public List<Person> findAll() {
+    	Session session = sessionFactory.getCurrentSession();
+ 
+    	List<Person> people = session.createQuery("FROM Person", Person.class).getResultList();
+    	
+    	return people;
     }
-    
+    @Transactional(readOnly = true)
     public Optional<Person> findById(int id) {
-    	return jdbcTemplate.query("SELECT * FROM Person WHERE id=?", new BeanPropertyRowMapper<>(Person.class), id )
-                .stream().findFirst();
+    	Session session = sessionFactory.getCurrentSession();
+    	Person person = session.find(Person.class, id);
+    	Hibernate.initialize(person.getBooks());
+    	return Optional.ofNullable(person);
     }
-
+    @Transactional
     public void save(Person person) {
-        jdbcTemplate.update("INSERT INTO Person(full_name, birth_year) VALUES(?, ?)", person.getFullName(), person.getBirthYear());
+    	Session session = sessionFactory.getCurrentSession();
+    	session.persist(person);
     }
     
-   public void updateById(int id, Person updatedPerson) {
-	   jdbcTemplate.update("UPDATE Person SET full_name=?, birth_year=? WHERE id=?", updatedPerson.getFullName(),
-               updatedPerson.getBirthYear(), id);
+   @Transactional
+   public void update(Person updatedPerson) {
+	   Session session = sessionFactory.getCurrentSession();
+	   session.merge(updatedPerson);
    }
-   
+   @Transactional
    public void deleteById(int id) {
-	   jdbcTemplate.update("DELETE FROM Person WHERE id=?", id);
+	   Session session = sessionFactory.getCurrentSession();
+	   session.remove(session.find(Person.class, id));
    }
 }
