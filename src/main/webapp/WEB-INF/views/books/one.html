@@ -124,14 +124,14 @@
             <span th:text="${'Year: ' + book.getYear()}"></span>
         </div>
 
-        <div th:if="${book.getPersonId() == null}" class="status status-available">
+        <div th:if="${book.getBookHolder() == null}" class="status status-available">
             Книга свободна
         </div>
-        <div th:unless="${book.getPersonId() == null}" class="status status-taken">
-            Книга у: <strong th:text="${bookHolder.getFullName()}"></strong>
+        <div th:unless="${book.getBookHolder() == null}" class="status status-taken">
+            Книга у: <strong th:text="${book.getBookHolder().getFullName()}"></strong>
         </div>
 
-        <div th:if="${book.getPersonId() == null}">
+        <div th:if="${book.getBookHolder() == null}">
             <form th:action="@{/books/{id}/assign(id=${book.id})}" method="post" class="form-group">
                 <select name="personId" required>
                     <option value="">Выдать книгу человеку</option>
@@ -143,7 +143,7 @@
                 <button type="submit" class="btn btn-success">Выдать книгу</button>
             </form>
         </div>
-        <div th:unless="${book.getPersonId() == null}">
+        <div th:unless="${book.getBookHolder() == null}">
             <form th:action="@{/books/{id}/release(id=${book.id})}" method="post">
                 <button type="submit" class="btn btn-primary">Освободить книгу</button>
             </form>
