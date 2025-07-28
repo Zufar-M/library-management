@@ -1,14 +1,28 @@
+### General ###
+.DS_Store
+Thumbs.db
+
 ### Java ###
 *.class
 *.jar
 *.war
 *.ear
+*.iws
+*.iml
+*.ipr
 bin/
 build/
 out/
 target/
+!**/src/main/**/target/
+!**/src/test/**/target/
 
-### Eclipse ###
+### IDEs ###
+# IntelliJ
+.idea/
+*.iml
+
+# Eclipse
 .metadata/
 .settings/
 .project
@@ -16,23 +30,34 @@ target/
 *.launch
 .factorypath
 
-### PostgreSQL ###
-*.sql
-/db/
-/database/
-!/src/main/resources/schema.sql
+# NetBeans
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+
+# VS Code
+.vscode/
+
+# STS
+.apt_generated
+.springBeans
+.sts4-cache
 
 ### Logs ###
 *.log
 logs/
 
-### System ###
-.DS_Store
-Thumbs.db
+### Databases ###
+/db/
+/database/
+*.sql
+!/src/main/resources/schema.sql
 
-### Configuration files ###
-/src/main/resources/hibernate.properties
-!/src/main/resources/hibernate.properties.example
+### Spring Boot ###
+/src/main/resources/application.properties  
+!/src/main/resources/application.properties.example
 
-### Thymeleaf cache ###
+### Hibernate/Thymeleaf ###
 /src/main/resources/templates/cache/
