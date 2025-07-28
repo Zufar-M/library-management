@@ -1,6 +1,5 @@
 package io.github.zufarm.library.controllers;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -12,11 +11,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.server.ResponseStatusException;
-import io.github.zufarm.library.dao.BookDAO;
-import io.github.zufarm.library.dao.PersonDAO;
 import io.github.zufarm.library.models.Book;
 import io.github.zufarm.library.models.Person;
+import io.github.zufarm.library.services.BookService;
+import io.github.zufarm.library.services.PeopleService;
 import io.github.zufarm.library.util.BookValidator;
 import jakarta.validation.Valid;
 
@@ -24,20 +22,20 @@ import jakarta.validation.Valid;
 @Controller
 @RequestMapping("/books")
 public class BookController {
-	private final BookDAO bookDAO;
-	private final PersonDAO personDAO;
+	private final BookService bookService;
+	private final PeopleService peopleService;
 	private final BookValidator bookValidator;
 	
 	@Autowired
-	public BookController(BookDAO bookDAO, PersonDAO personDAO, BookValidator bookValidator) {
-		this.bookDAO = bookDAO;
-		this.personDAO = personDAO;
+	public BookController(BookService bookService, PeopleService peopleService, BookValidator bookValidator) {
+		this.bookService = bookService;
+		this.peopleService = peopleService;
 		this.bookValidator = bookValidator;
 	}
 
 	@GetMapping()
 	public String getAllBooks(Model model) {
-		model.addAttribute("books", bookDAO.findAll());
+		model.addAttribute("books", bookService.findAll());
         return "books/all";
     }
 	
@@ -52,24 +50,23 @@ public class BookController {
 		if (bindingResult.hasErrors()) {
             return "books/new";
         }
-        bookDAO.save(book);
+        bookService.save(book);
         return "redirect:/books";
     }
 	
 	@GetMapping("/{id}")
     public String getBookById(@PathVariable("id") int id, Model model) {
-		Book book = bookDAO.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Book with this id not found"));
+		Book book = bookService.findOne(id);
         model.addAttribute("book", book);
-        model.addAttribute("people", personDAO.findAll());
+        model.addAttribute("people", peopleService.findAll());
         
         return "books/one";
     }
 	
 	@GetMapping("/{id}/edit")
     public String edit(Model model, @PathVariable("id") int id) {
-		Book book = bookDAO.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Book with this id not found"));
+		Book book = bookService.findOne(id);
         model.addAttribute("book", book);
-
         return "books/edit";
     }
 	
@@ -79,30 +76,30 @@ public class BookController {
 		if (bindingResult.hasErrors()) {
             return "books/edit";
         }
-		Person bookHolder = bookDAO.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Book with this id not found")).getBookHolder();
+		Person bookHolder = bookService.findOne(id).getBookHolder();
         book.setBookHolder(bookHolder);
-		bookDAO.updateById(id, book);
+		bookService.update(id, book);
         return "redirect:/books";
     }
 	
 	@DeleteMapping("/{id}")
     public String delete(@PathVariable("id") int id) {
-		bookDAO.deleteById(id);
+		bookService.delete(id);
         return "redirect:/books";
     }
 	
 	@PostMapping("/{id}/assign")
 	public String assign(@PathVariable("id") int bookId, @RequestParam("personId") int personId) {
-		Book book = bookDAO.findById(bookId).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Book with this id not found"));
-		book.setBookHolder(personDAO.findById(personId).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Book with this id not found")));
-		bookDAO.updateById(bookId, book);
+		Book book = bookService.findOne(bookId);
+		book.setBookHolder(peopleService.findOne(personId));
+		bookService.update(bookId, book);
         return "redirect:/books/" + bookId;
     }
 	@PostMapping("/{id}/release")
 	public String release(@PathVariable("id") int bookId) {
-		Book book = bookDAO.findById(bookId).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Book with this id not found"));
+		Book book = bookService.findOne(bookId);
 		book.setBookHolder(null);
-		bookDAO.updateById(bookId, book);
+		bookService.update(bookId, book);
         return "redirect:/books/" + bookId;
         
         

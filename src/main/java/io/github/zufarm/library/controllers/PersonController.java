@@ -28,7 +28,6 @@ public class PersonController {
 	@GetMapping()
 	public String getAllPeople(Model model) {
 		model.addAttribute("people", peopleService.findAll());
-		System.out.println("ALL");
         return "people/all";
     }
 	
