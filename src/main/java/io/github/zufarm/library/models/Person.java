@@ -1,8 +1,6 @@
 package io.github.zufarm.library.models;
-
 import java.util.ArrayList;
 import java.util.List;
-
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -63,7 +61,6 @@ public class Person {
 	public void setBirthYear(int birthYear) {
 		this.birthYear = birthYear;
 	}
-	// For @ModelAttribute
 	public Person() {
 		
 	}

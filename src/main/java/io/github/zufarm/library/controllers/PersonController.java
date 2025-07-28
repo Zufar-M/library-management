@@ -1,6 +1,5 @@
 package io.github.zufarm.library.controllers;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -11,26 +10,24 @@ import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.server.ResponseStatusException;
-import io.github.zufarm.library.dao.PersonDAO;
 import io.github.zufarm.library.models.Person;
+import io.github.zufarm.library.services.PeopleService;
 import jakarta.validation.Valid;
 
 @Controller
 @RequestMapping("/people")
 public class PersonController {
 	
-	private final PersonDAO personDAO;
-	
+	private final PeopleService peopleService;
+
 	@Autowired
-	public PersonController(PersonDAO personDAO) {
-		this.personDAO = personDAO;
+	public PersonController(PeopleService peopleService) {
+		this.peopleService = peopleService;
 	}
 
 	@GetMapping()
 	public String getAllPeople(Model model) {
-		model.addAttribute("people", personDAO.findAll());
-		System.out.println("ALL");
+		model.addAttribute("people", peopleService.findAll());
         return "people/all";
     }
 	
@@ -44,13 +41,13 @@ public class PersonController {
 		if (bindingResult.hasErrors()) {
             return "people/new";
         }
-        personDAO.save(person);
+        peopleService.save(person);
         return "redirect:/people";
     }
 	
 	@GetMapping("/{id}")
     public String getPersonById(@PathVariable("id") int id, Model model) {
-		Person person = personDAO.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Person with this id not found"));
+		Person person = peopleService.findOne(id);
         model.addAttribute("person", person);
         model.addAttribute("personBooks", person.getBooks());
         return "people/one";
@@ -59,7 +56,7 @@ public class PersonController {
 	
 	@GetMapping("/{id}/edit")
     public String edit(Model model, @PathVariable("id") int id) {
-		Person person = personDAO.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Person with this id not found"));
+		Person person = peopleService.findOne(id);
         model.addAttribute("person", person);
         return "people/edit";
     }
@@ -69,13 +66,13 @@ public class PersonController {
 		if (bindingResult.hasErrors()) {
             return "people/edit";
         }
-        personDAO.updateById(id, person);
+        peopleService.update(id, person);
         return "redirect:/people";
     }
 	
 	@DeleteMapping("/{id}")
     public String delete(@PathVariable("id") int id) {
-        personDAO.deleteById(id);
+        peopleService.delete(id);
         return "redirect:/people";
     }
 	
