@@ -13,11 +13,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import io.github.zufarm.library.models.Book;
 import io.github.zufarm.library.models.Person;
+import io.github.zufarm.library.security.AppUserDetails;
 import io.github.zufarm.library.services.BookService;
 import io.github.zufarm.library.services.PeopleService;
 import io.github.zufarm.library.util.BookValidator;
 import jakarta.validation.Valid;
-
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 @Controller
 @RequestMapping("/books")
@@ -36,6 +38,9 @@ public class BookController {
 	@GetMapping()
 	public String getAllBooks(Model model) {
 		model.addAttribute("books", bookService.findAll());
+			Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+			AppUserDetails appUserDetails = (AppUserDetails) authentication.getPrincipal();
+			System.out.println(appUserDetails.getAppUser());
         return "books/all";
     }
 	
