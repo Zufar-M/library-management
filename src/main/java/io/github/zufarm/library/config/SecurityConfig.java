@@ -27,15 +27,18 @@ private final AppUserDetailsService appUserDetailsService;
 	@Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
+        	.csrf(csrf -> csrf.disable())
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/login").permitAll()
+                .requestMatchers("/auth/login", "/error").permitAll()
                 .anyRequest().authenticated()           
             )
-            .formLogin(form -> form                 
-                .defaultSuccessUrl("/books")                 
+            .formLogin(form -> form
+            	.loginPage("/auth/login")
+            	.loginProcessingUrl("/library/auth/login")
+                .defaultSuccessUrl("/books", true)
+                .failureUrl("/auth/login?error")
                 .permitAll()
             );
-
         return http.build();
     }
 	
