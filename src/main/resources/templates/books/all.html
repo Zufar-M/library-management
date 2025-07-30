@@ -105,5 +105,10 @@
         <a class="btn create-btn" href="/library/books/new">Добавить новую книгу</a>
         <a class="btn people-btn" href="/library/people">Список всех читателей</a>
     </div>
+    
+    <form th:action="@{/library/auth/logout}" method="post">
+    <button type="submit">Logout</button>
+    
+</form>
 </body>
 </html>
