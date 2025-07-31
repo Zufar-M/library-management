@@ -30,6 +30,7 @@ public class AppUserService {
 	@Transactional
 	public void register(AppUser appUser) {
 		appUser.setPassword(passwordEncoder.encode(appUser.getPassword()));
+		appUser.setRole("ROLE_USER");
 		appUserRepository.save(appUser);
 	}
 	

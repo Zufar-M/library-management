@@ -20,8 +20,19 @@ public class AppUser {
 
 	    @Column(name = "password")
 	    private String password;
+	    
+	    @Column(name = "role")
+	    private String role;
 
-	    public AppUser() {
+	    public String getRole() {
+			return role;
+		}
+
+		public void setRole(String role) {
+			this.role = role;
+		}
+
+		public AppUser() {
 	    }
 
 	    public AppUser(String username, int yearOfBirth) {

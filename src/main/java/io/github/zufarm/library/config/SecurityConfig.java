@@ -27,8 +27,9 @@ private final AppUserDetailsService appUserDetailsService;
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/auth/login", "/error", "/auth/registration").permitAll()
-                .anyRequest().authenticated()           
+            	.requestMatchers("/auth/login", "/error", "/auth/registration").permitAll() 
+            	.requestMatchers("/admin").hasRole("ADMIN")   	
+                .anyRequest().hasAnyRole("USER", "ADMIN")
             )
             .formLogin(form -> form
             	.loginPage("/auth/login")
@@ -41,8 +42,7 @@ private final AppUserDetailsService appUserDetailsService;
                     .invalidateHttpSession(true)
                     .deleteCookies("JSESSIONID")
                     .clearAuthentication(true)
-                    .permitAll()
-                );
+            );
         return http.build();
     }
 	

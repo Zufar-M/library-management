@@ -1,8 +1,10 @@
 package io.github.zufarm.library.security;
 
 import java.util.Collection;
+import java.util.Collections;
 
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import io.github.zufarm.library.models.AppUser;
@@ -17,8 +19,7 @@ public class AppUserDetails implements UserDetails{
 
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
-		// TODO Auto-generated method stub
-		return null;
+		return Collections.singletonList(new SimpleGrantedAuthority(appUser.getRole()));
 	}
 
 	@Override

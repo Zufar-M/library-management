@@ -13,11 +13,32 @@
             margin: 0 auto;
             padding: 20px;
             background-color: #f5f5f5;
+            position: relative;
+        }
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
         }
         h1 {
             color: #2c3e50;
             border-bottom: 2px solid #3498db;
             padding-bottom: 10px;
+            margin: 0;
+        }
+        .logout-btn {
+            background: #e74c3c;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s;
+            font-size: 0.9em;
+        }
+        .logout-btn:hover {
+            background: #c0392b;
         }
         .people-list {
             list-style: none;
@@ -77,7 +98,12 @@
     </style>
 </head>
 <body>
-    <h1>Список читателей в библиотеке</h1>
+    <div class="header-container">
+        <h1>Список читателей в библиотеке</h1>
+        <form th:action="@{/library/auth/logout}" method="post">
+            <button type="submit" class="logout-btn">Выйти</button>
+        </form>
+    </div>
     
     <ul class="people-list">
         <li class="person-item" th:each="person : ${people}">
