@@ -18,7 +18,6 @@ import io.github.zufarm.library.services.PeopleService;
 import io.github.zufarm.library.util.BookValidator;
 import jakarta.validation.Valid;
 
-
 @Controller
 @RequestMapping("/books")
 public class BookController {
