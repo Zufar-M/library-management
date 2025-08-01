@@ -1,5 +1,7 @@
 package io.github.zufarm.library.controllers;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -11,8 +13,11 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+
 import io.github.zufarm.library.models.Book;
 import io.github.zufarm.library.models.Person;
+import io.github.zufarm.library.security.AppUserDetails;
 import io.github.zufarm.library.services.BookService;
 import io.github.zufarm.library.services.PeopleService;
 import io.github.zufarm.library.util.BookValidator;
@@ -24,7 +29,6 @@ public class BookController {
 	private final BookService bookService;
 	private final PeopleService peopleService;
 	private final BookValidator bookValidator;
-	
 	@Autowired
 	public BookController(BookService bookService, PeopleService peopleService, BookValidator bookValidator) {
 		this.bookService = bookService;
@@ -33,9 +37,13 @@ public class BookController {
 	}
 
 	@GetMapping()
+	@ResponseBody
 	public String getAllBooks(Model model) {
 		model.addAttribute("books", bookService.findAll());
-        return "books/all";
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		AppUserDetails appUserDetails = (AppUserDetails) authentication.getPrincipal();
+		
+        return appUserDetails.getUsername();
     }
 	
 	@GetMapping("/new")
