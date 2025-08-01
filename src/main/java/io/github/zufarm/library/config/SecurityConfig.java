@@ -26,8 +26,9 @@ private final AppUserDetailsService appUserDetailsService;
 	@Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
+        	.csrf(csrf -> csrf.disable())
             .authorizeHttpRequests(auth -> auth
-            	.requestMatchers("/auth/login", "/error", "/auth/registration").permitAll() 
+            	.requestMatchers("/auth/login", "/error", "/auth/registration", "/admin").permitAll() 
             	.requestMatchers("/admin").hasRole("ADMIN")   	
                 .anyRequest().hasAnyRole("USER", "ADMIN")
             )

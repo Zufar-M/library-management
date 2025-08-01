@@ -1,5 +1,6 @@
 package io.github.zufarm.library.services;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import io.github.zufarm.library.models.AppUser;
 import io.github.zufarm.library.repositories.AppUserRepository;
+import io.github.zufarm.library.util.AppUserNotFoundException;
 
 @Service
 @Transactional(readOnly = true)
@@ -32,6 +34,14 @@ public class AppUserService {
 		appUser.setPassword(passwordEncoder.encode(appUser.getPassword()));
 		appUser.setRole("ROLE_USER");
 		appUserRepository.save(appUser);
+	}
+	
+	public List<AppUser> findAll() {
+		return appUserRepository.findAll();
+	}
+	
+	public AppUser findById(int id) {
+		return appUserRepository.findById(id).orElseThrow(AppUserNotFoundException::new);
 	}
 	
 }
