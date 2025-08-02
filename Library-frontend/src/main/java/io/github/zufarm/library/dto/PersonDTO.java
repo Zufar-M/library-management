@@ -32,4 +32,12 @@ public class PersonDTO {
     public SimpleIntegerProperty birthYearProperty() {
         return birthYear;
     }
+    
+    public void setName(String fullName) {
+        this.fullName.set(fullName);
+    }
+
+    public void Year(int birthYear) {
+        this.birthYear.set(birthYear);
+    }
 }

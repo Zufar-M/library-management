@@ -4,6 +4,8 @@ import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -13,6 +15,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -42,9 +45,16 @@ public class PersonController {
 		return convertToPersonDTO(peopleService.findAll());
     }
 	
-	@GetMapping("/new")
-    public String newPerson(@ModelAttribute("person") Person person) {
-        return "people/new";
+	@PostMapping("/new")
+    public ResponseEntity<?> newPerson(@RequestBody @Valid PersonDTO personDTO, BindingResult bindingResult ) {
+		
+		Person person = convertToPerson(personDTO);
+		
+		//TO-DO personValidator.validate(person, bindingResult);
+		
+		peopleService.save(person);
+		
+        return ResponseEntity.status(HttpStatus.CREATED).body("Читатель успешно добавлен");
     }
 	
 	@PostMapping()
@@ -89,6 +99,10 @@ public class PersonController {
 	
 	public List<PersonDTO> convertToPersonDTO(List<Person> people) {
 		return people.stream().map(person -> modelMapper.map(person, PersonDTO.class)).collect(Collectors.toList());
+	}
+	
+	public Person convertToPerson(PersonDTO personDTO) {
+		return modelMapper.map(personDTO, Person.class);
 	}
 	
 }

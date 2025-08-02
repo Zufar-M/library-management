@@ -1,5 +1,6 @@
 package io.github.zufarm.library.view.person;
 import io.github.zufarm.library.services.PersonService;
+import io.github.zufarm.library.view.book.BookAddView;
 import io.github.zufarm.library.dto.PersonDTO;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -8,6 +9,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
 public class PersonListView {
@@ -47,7 +49,14 @@ public class PersonListView {
         Button refreshBtn = new Button("Обновить");
         refreshBtn.setOnAction(e -> loadPeople());
         
-        layout.getChildren().addAll(table, refreshBtn);
+        Button addPersonBtn = new Button("Добавить нового читателя");
+        addPersonBtn.setOnAction(e -> {
+            new PersonAddView().showForm(this::loadPeople);
+        });
+        HBox buttonPanel = new HBox(10);
+        buttonPanel.getChildren().addAll(refreshBtn, addPersonBtn);
+        
+        layout.getChildren().addAll(table, buttonPanel);
         return layout;
     }
 }
