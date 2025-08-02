@@ -29,10 +29,8 @@ public class SceneManager {
     public static void navigateTo(String viewName) {
         switch (viewName) {
             case "books":
-                
                 break;
             case "addBook":
-                
                 break;
             default:
                 break;

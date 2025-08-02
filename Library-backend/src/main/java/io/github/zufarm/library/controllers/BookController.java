@@ -1,9 +1,12 @@
 package io.github.zufarm.library.controllers;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -13,6 +16,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -45,9 +49,16 @@ public class BookController {
         return convertToBookDTO(bookService.findAll());
     }
 	
-	@GetMapping("/new")
-    public String newBook(@ModelAttribute("book") Book book) {
-        return "books/new";
+	@PostMapping("/new")
+    public ResponseEntity<?> newBook(@RequestBody @Valid BookDTO bookDTO, BindingResult bindingResult ) {
+		
+		Book book = convertToBook(bookDTO);
+		
+		//TO-DO bookValidator.validate(book, bindingResult);
+		
+		bookService.save(book);
+		
+        return ResponseEntity.status(HttpStatus.CREATED).body("Книга успешно создана");
     }
 	
 	@PostMapping()
@@ -112,5 +123,9 @@ public class BookController {
 		return books.stream()
         .map(book -> modelMapper.map(book, BookDTO.class))
         .collect(Collectors.toList());
+	}
+	
+	public Book convertToBook(BookDTO bookDTO) {
+		return modelMapper.map(bookDTO, Book.class);
 	}
 }

@@ -10,6 +10,7 @@ import java.util.List;
 
 public class BookService {
     private static final String API_URL = "http://localhost:8080/library/books";
+    private static final String ADD_BOOK_URL = "http://localhost:8080/library/books/new";
     private final RestTemplate restTemplate = new RestTemplate();
     
     public List<BookDTO> getAllBooks() {
@@ -35,4 +36,27 @@ public class BookService {
         }
         return List.of();
     }
+    
+    public boolean addBook(BookDTO book) {
+        try {
+            HttpHeaders headers = new HttpHeaders();
+            headers.set("Authorization", "Bearer " + JwtTokenUtil.getToken());
+            headers.setContentType(MediaType.APPLICATION_JSON);
+            
+            HttpEntity<BookDTO> entity = new HttpEntity<>(book, headers);
+            
+            ResponseEntity<Void> response = restTemplate.exchange(
+                ADD_BOOK_URL,
+                HttpMethod.POST,
+                entity,
+                Void.class
+            );
+            
+            return response.getStatusCode() == HttpStatus.CREATED;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+    
 }

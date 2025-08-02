@@ -43,4 +43,17 @@ public class BookDTO {
     public SimpleIntegerProperty yearProperty() {
         return year;
     }
+    
+    public void setName(String name) {
+        this.name.set(name);
+    }
+
+    public void setAuthor(String author) {
+        this.author.set(author);
+    }
+
+    public void setYear(int year) {
+        this.year.set(year);
+    }
+    
 }

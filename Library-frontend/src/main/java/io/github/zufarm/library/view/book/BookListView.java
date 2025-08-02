@@ -9,6 +9,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
 public class BookListView {
@@ -51,7 +52,14 @@ public class BookListView {
         Button refreshBtn = new Button("Обновить");
         refreshBtn.setOnAction(e -> loadBooks());
         
-        layout.getChildren().addAll(table, refreshBtn);
+        Button addBookBtn = new Button("Добавить книгу");
+        addBookBtn.setOnAction(e -> {
+            new BookAddView().showForm(this::loadBooks);
+        });
+        HBox buttonPanel = new HBox(10);
+        buttonPanel.getChildren().addAll(refreshBtn, addBookBtn);
+        
+        layout.getChildren().addAll(table, buttonPanel);
         return layout;
     }
 }
