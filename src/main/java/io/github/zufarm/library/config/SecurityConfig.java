@@ -6,9 +6,12 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+
 import io.github.zufarm.library.services.AppUserDetailsService;
 
 
@@ -17,33 +20,28 @@ import io.github.zufarm.library.services.AppUserDetailsService;
 public class SecurityConfig {
 
 private final AppUserDetailsService appUserDetailsService;
+
+private final JWTFilter jwtFilter;
 	
 	@Autowired
-	public SecurityConfig(AppUserDetailsService appUserDetailsService) {
+	public SecurityConfig(AppUserDetailsService appUserDetailsService, JWTFilter jwtFilter) {
 		this.appUserDetailsService = appUserDetailsService;
+		this.jwtFilter = jwtFilter;
 	}
 
 	@Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-        	.csrf(csrf -> csrf.disable())
-            .authorizeHttpRequests(auth -> auth
-            	.requestMatchers("/auth/login", "/error", "/auth/registration", "/admin").permitAll() 
+            	.authorizeHttpRequests(auth -> auth
+            	.requestMatchers("/auth/login", "/error", "/auth/registration").permitAll() 
             	.requestMatchers("/admin").hasRole("ADMIN")   	
                 .anyRequest().hasAnyRole("USER", "ADMIN")
-            )
-            .formLogin(form -> form
-            	.loginPage("/auth/login")
-            	.loginProcessingUrl("/library/auth/login")
-                .defaultSuccessUrl("/books", true)
-                .failureUrl("/auth/login?error")
-            ).logout(logout -> logout
-                    .logoutUrl("/library/auth/logout")
-                    .logoutSuccessUrl("/auth/login?logout")
-                    .invalidateHttpSession(true)
-                    .deleteCookies("JSESSIONID")
-                    .clearAuthentication(true)
-            );
+            	)
+            	.csrf(csrf -> csrf.disable())
+        		.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+        		.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
+            	
+     
         return http.build();
     }
 	
@@ -66,4 +64,5 @@ private final AppUserDetailsService appUserDetailsService;
     public PasswordEncoder passwordEncoder() {
 		return new BCryptPasswordEncoder();
     }
+	
 }
