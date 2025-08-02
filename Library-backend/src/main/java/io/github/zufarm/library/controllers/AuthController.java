@@ -86,7 +86,7 @@ public class AuthController {
 			return Map.of("message", "Incorrect credentials!");
 		}
 		String token = jwtUtil.generateToken(authenticationDTO.getUsername());
-		return Map.of("jwt-token", token);
+		return Map.of("token", token);
 	}
 	
 }

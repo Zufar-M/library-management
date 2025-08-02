@@ -1,4 +1,9 @@
 package io.github.zufarm.library.controllers;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -15,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import io.github.zufarm.library.dto.BookDTO;
 import io.github.zufarm.library.models.Book;
 import io.github.zufarm.library.models.Person;
 import io.github.zufarm.library.security.AppUserDetails;
@@ -29,21 +35,19 @@ public class BookController {
 	private final BookService bookService;
 	private final PeopleService peopleService;
 	private final BookValidator bookValidator;
+	private final ModelMapper modelMapper;
 	@Autowired
-	public BookController(BookService bookService, PeopleService peopleService, BookValidator bookValidator) {
+	public BookController(BookService bookService, PeopleService peopleService, BookValidator bookValidator, ModelMapper modelMapper) {
 		this.bookService = bookService;
 		this.peopleService = peopleService;
 		this.bookValidator = bookValidator;
+		this.modelMapper = modelMapper;
 	}
 
 	@GetMapping()
 	@ResponseBody
-	public String getAllBooks(Model model) {
-		model.addAttribute("books", bookService.findAll());
-		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		AppUserDetails appUserDetails = (AppUserDetails) authentication.getPrincipal();
-		
-        return appUserDetails.getUsername();
+	public List<BookDTO> getAllBooks(Model model) {
+        return convertToBookDTO(bookService.findAll());
     }
 	
 	@GetMapping("/new")
@@ -108,7 +112,10 @@ public class BookController {
 		book.setBookHolder(null);
 		bookService.update(bookId, book);
         return "redirect:/books/" + bookId;
-        
-        
     }
+	public List<BookDTO> convertToBookDTO(List<Book> books) {
+		return books.stream()
+        .map(book -> modelMapper.map(book, BookDTO.class))
+        .collect(Collectors.toList());
+	}
 }
