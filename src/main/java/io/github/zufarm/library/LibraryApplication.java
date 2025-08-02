@@ -16,5 +16,4 @@ public class LibraryApplication {
 	public ModelMapper modelMapper() {
 		return new ModelMapper();
 	}
-
 }
