@@ -9,7 +9,6 @@ public class BookAddView {
     
     public BookAddView() {
         GridPane form = new GridPane();
-        // Поля формы для добавления книги
         view = form;
     }
     

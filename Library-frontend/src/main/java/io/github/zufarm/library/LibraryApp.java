@@ -12,7 +12,6 @@ public class LibraryApp extends Application {
             SceneManager.init(primaryStage);
             LoginView loginView = new LoginView();
             SceneManager.switchScene(loginView.getView());
-            
             primaryStage.setTitle("Библиотечная система");
             primaryStage.show();
         } catch (Exception e) {

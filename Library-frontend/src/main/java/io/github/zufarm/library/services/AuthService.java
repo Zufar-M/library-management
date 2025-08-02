@@ -23,7 +23,6 @@ public class AuthService {
             );
             
             if (response.getStatusCode() == HttpStatus.OK && response.getBody() != null) {
-                // Сохраняем токен в памяти приложения
                 JwtTokenUtil.setToken(response.getBody().getToken());
                 return response.getBody();
             }

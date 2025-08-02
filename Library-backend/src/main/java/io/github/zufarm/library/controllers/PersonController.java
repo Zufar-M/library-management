@@ -1,4 +1,8 @@
 package io.github.zufarm.library.controllers;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -10,6 +14,11 @@ import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import io.github.zufarm.library.dto.BookDTO;
+import io.github.zufarm.library.dto.PersonDTO;
+import io.github.zufarm.library.models.Book;
 import io.github.zufarm.library.models.Person;
 import io.github.zufarm.library.services.PeopleService;
 import jakarta.validation.Valid;
@@ -19,16 +28,18 @@ import jakarta.validation.Valid;
 public class PersonController {
 	
 	private final PeopleService peopleService;
+	private final ModelMapper modelMapper;
 
 	@Autowired
-	public PersonController(PeopleService peopleService) {
+	public PersonController(PeopleService peopleService, ModelMapper modelMapper) {
 		this.peopleService = peopleService;
+		this.modelMapper = modelMapper;
 	}
 
+	@ResponseBody
 	@GetMapping()
-	public String getAllPeople(Model model) {
-		model.addAttribute("people", peopleService.findAll());
-        return "people/all";
+	public List<PersonDTO> getAllPeople() {
+		return convertToPersonDTO(peopleService.findAll());
     }
 	
 	@GetMapping("/new")
@@ -75,5 +86,9 @@ public class PersonController {
         peopleService.delete(id);
         return "redirect:/people";
     }
+	
+	public List<PersonDTO> convertToPersonDTO(List<Person> people) {
+		return people.stream().map(person -> modelMapper.map(person, PersonDTO.class)).collect(Collectors.toList());
+	}
 	
 }

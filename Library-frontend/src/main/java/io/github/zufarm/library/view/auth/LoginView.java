@@ -12,7 +12,6 @@ public class LoginView {
     public LoginView() throws IOException {
         FXMLLoader loader = new FXMLLoader();
         
-        // Получаем URL ресурса (важно: путь должен быть правильным)
         URL fxmlUrl = getClass().getResource("/fxml/auth/login.fxml");
         if (fxmlUrl == null) {
             throw new IOException("Cannot find FXML file: /fxml/auth/login.fxml");

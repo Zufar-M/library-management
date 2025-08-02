@@ -29,10 +29,10 @@ public class SceneManager {
     public static void navigateTo(String viewName) {
         switch (viewName) {
             case "books":
-                // Здесь можно загрузить BooksListView
+                
                 break;
             case "addBook":
-                // Здесь можно загрузить BookAddView
+                
                 break;
             default:
                 break;

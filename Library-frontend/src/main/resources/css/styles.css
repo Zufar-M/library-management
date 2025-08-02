@@ -35,7 +35,6 @@
 .text-field, .password-field {
     -fx-min-width: 200;
 }
-/* Основные стили для MainView */
 .tab-pane {
     -fx-tab-min-width: 100px;
     -fx-tab-max-width: 200px;
@@ -52,7 +51,6 @@
     -fx-background-radius: 4px;
 }
 
-/* Стили для раздела книг */
 .books-section {
     -fx-spacing: 15px;
     -fx-padding: 20px;
@@ -67,7 +65,6 @@
     -fx-background-color: #2196F3;
     -fx-text-fill: white;
 }
-/* Стили для таблицы книг */
 .table-view {
     -fx-base: #f5f5f5;
     -fx-table-cell-border-color: transparent;
@@ -87,7 +84,6 @@
     -fx-background-color: #bbdefb;
 }
 
-/* Кнопка обновления */
 .button {
     -fx-background-color: #4CAF50;
     -fx-text-fill: white;

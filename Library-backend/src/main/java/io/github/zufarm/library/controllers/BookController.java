@@ -1,12 +1,9 @@
 package io.github.zufarm.library.controllers;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -19,11 +16,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-
 import io.github.zufarm.library.dto.BookDTO;
 import io.github.zufarm.library.models.Book;
 import io.github.zufarm.library.models.Person;
-import io.github.zufarm.library.security.AppUserDetails;
 import io.github.zufarm.library.services.BookService;
 import io.github.zufarm.library.services.PeopleService;
 import io.github.zufarm.library.util.BookValidator;
@@ -46,7 +41,7 @@ public class BookController {
 
 	@GetMapping()
 	@ResponseBody
-	public List<BookDTO> getAllBooks(Model model) {
+	public List<BookDTO> getAllBooks() {
         return convertToBookDTO(bookService.findAll());
     }
 	

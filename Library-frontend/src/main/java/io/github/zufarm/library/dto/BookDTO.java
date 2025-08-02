@@ -21,7 +21,6 @@ public class BookDTO {
         this.year = new SimpleIntegerProperty(year);
     }
 
-    // Геттеры
     public String getName() {
         return name.get();
     }

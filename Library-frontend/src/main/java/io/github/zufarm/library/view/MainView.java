@@ -1,7 +1,7 @@
 package io.github.zufarm.library.view;
 
-import io.github.zufarm.library.util.SceneManager;
 import io.github.zufarm.library.view.book.BookListView;
+import io.github.zufarm.library.view.person.PersonListView;
 import javafx.scene.Parent;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tab;
@@ -19,15 +19,13 @@ public class MainView {
         BorderPane root = new BorderPane();
         TabPane tabPane = new TabPane();
         
-        // Вкладка "Книги"
         Tab booksTab = new Tab("Книги");
         booksTab.setClosable(false);
-        booksTab.setContent(new BookListView().getView()); // Загружаем список книг сразу
+        booksTab.setContent(new BookListView().getView()); 
         
-        // Вкладка "Читатели" (заглушка)
         Tab readersTab = new Tab("Читатели");
         readersTab.setClosable(false);
-        readersTab.setContent(new Label("Раздел читателей в разработке"));
+        readersTab.setContent(new PersonListView().getView());
         
         tabPane.getTabs().addAll(booksTab, readersTab);
         root.setCenter(tabPane);

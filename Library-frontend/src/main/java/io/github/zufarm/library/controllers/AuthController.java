@@ -29,7 +29,6 @@ public class AuthController {
             LoginRequest request = new LoginRequest(username, password);
             JwtResponse response = authService.login(request);
             if (response != null && response.getToken() != null) {
-                // Успешная авторизация
             	
                 SceneManager.switchScene(new MainView().getView());
             } else {
