@@ -1,12 +1,12 @@
 package io.github.zufarm.library.view.person;
 import io.github.zufarm.library.services.PersonService;
-import io.github.zufarm.library.view.book.BookAddView;
 import io.github.zufarm.library.dto.PersonDTO;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.HBox;
@@ -23,14 +23,24 @@ public class PersonListView {
     }
     
     private void initializeTable() {
-        TableColumn<PersonDTO, String> titleCol = new TableColumn<>("Имя");
-        titleCol.setCellValueFactory(new PropertyValueFactory<>("fullName"));
+        TableColumn<PersonDTO, String> fullNameCol = new TableColumn<>("Имя");
+        fullNameCol.setCellValueFactory(new PropertyValueFactory<>("fullName"));
         
-        TableColumn<PersonDTO, Integer> yearCol = new TableColumn<>("Год рождения");
-        yearCol.setCellValueFactory(new PropertyValueFactory<>("birthYear"));
+        TableColumn<PersonDTO, Integer> birthYearCol = new TableColumn<>("Год рождения");
+        birthYearCol.setCellValueFactory(new PropertyValueFactory<>("birthYear"));
         
-        table.getColumns().addAll(titleCol, yearCol);
+        table.getColumns().addAll(fullNameCol, birthYearCol);
         table.setItems(people);
+        table.setRowFactory(tv -> {
+            TableRow<PersonDTO> row = new TableRow<>();
+            row.setOnMouseClicked(event -> {
+                if (event.getClickCount() == 2 && !row.isEmpty()) {
+                    PersonDTO rowData = row.getItem();
+                    new PersonDetailView().showDetail(rowData, this::loadPeople);
+                }
+            });
+            return row;
+        });
     }
     
     private void loadPeople() {

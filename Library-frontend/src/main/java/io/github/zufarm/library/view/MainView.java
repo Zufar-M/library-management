@@ -3,7 +3,6 @@ package io.github.zufarm.library.view;
 import io.github.zufarm.library.view.book.BookListView;
 import io.github.zufarm.library.view.person.PersonListView;
 import javafx.scene.Parent;
-import javafx.scene.control.Label;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.layout.BorderPane;

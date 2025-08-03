@@ -1,6 +1,5 @@
 package io.github.zufarm.library.view.person;
 
-import io.github.zufarm.library.dto.BookDTO;
 import io.github.zufarm.library.dto.PersonDTO;
 import io.github.zufarm.library.services.PersonService;
 import javafx.geometry.Insets;
@@ -34,7 +33,7 @@ public class PersonAddView {
         Button submitBtn = new Button("Сохранить");
         submitBtn.setOnAction(e -> {
             try {
-                PersonDTO person = new PersonDTO(nameField.getText(),Integer.parseInt(yearField.getText()));
+                PersonDTO person = new PersonDTO(0, nameField.getText(),Integer.parseInt(yearField.getText()));
 
                 personService.addPerson(person);
                 onSuccess.run();

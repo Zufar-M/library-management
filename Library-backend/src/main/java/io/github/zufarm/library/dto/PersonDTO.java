@@ -16,6 +16,16 @@ public class PersonDTO {
     @Max(value = 2025, message = "Год рождения должен быть не больше 2025")
 	private int birthYear;
 
+	private int id;
+	
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
+	}
+
 	public String getFullName() {
 		return fullName;
 	}

@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -75,11 +76,19 @@ public class PersonController {
         
     }
 	
-	@GetMapping("/{id}/edit")
-    public String edit(Model model, @PathVariable("id") int id) {
-		Person person = peopleService.findOne(id);
-        model.addAttribute("person", person);
-        return "people/edit";
+	@PutMapping("/edit/{id}")
+    public ResponseEntity<?> updatePerson(@RequestBody @Valid PersonDTO personDTO, BindingResult bindingResult, @PathVariable("id") int id) {
+		
+		// TO-DO
+//		personValidator.validate(person, bindingResult);
+//		if (bindingResult.hasErrors()) {
+//            return ;
+//        }
+		
+		Person person = convertToPerson(personDTO);
+		peopleService.update(id, person);
+		
+        return ResponseEntity.ok("Читатель обновлен");
     }
 	
 	@PatchMapping("/{id}")
@@ -91,10 +100,15 @@ public class PersonController {
         return "redirect:/people";
     }
 	
-	@DeleteMapping("/{id}")
-    public String delete(@PathVariable("id") int id) {
-        peopleService.delete(id);
-        return "redirect:/people";
+	@DeleteMapping("/delete/{id}")
+    public ResponseEntity<String> delete(@PathVariable("id") int id) {
+		try {
+	        peopleService.delete(id);
+	        return ResponseEntity.ok("Читатель успешно удален!");
+	    } catch (Exception e) {
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+	               .body("Ошибка при удалении читателя!");
+	    }
     }
 	
 	public List<PersonDTO> convertToPersonDTO(List<Person> people) {

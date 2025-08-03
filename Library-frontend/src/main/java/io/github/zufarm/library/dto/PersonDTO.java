@@ -9,15 +9,22 @@ import javafx.beans.property.SimpleStringProperty;
 public class PersonDTO {
     private final SimpleStringProperty fullName;
     private final SimpleIntegerProperty birthYear;
+    private final int id; 
 
     @JsonCreator
     public PersonDTO(
+    		@JsonProperty("id") int id,
             @JsonProperty("fullName") String fullName,
             @JsonProperty("birthYear") int birthYear) {
         this.fullName = new SimpleStringProperty(fullName);
         this.birthYear = new SimpleIntegerProperty(birthYear);
+        this.id = id;
     }
 
+    public int getId() {
+		return id;
+	}
+    
     public String getFullName() {
         return fullName.get();
     }
@@ -33,11 +40,11 @@ public class PersonDTO {
         return birthYear;
     }
     
-    public void setName(String fullName) {
+    public void setFullName(String fullName) {
         this.fullName.set(fullName);
     }
 
-    public void Year(int birthYear) {
+    public void setBirthYear(int birthYear) {
         this.birthYear.set(birthYear);
     }
 }
