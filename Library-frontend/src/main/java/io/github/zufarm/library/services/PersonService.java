@@ -11,6 +11,7 @@ public class PersonService {
     private static final String ADD_PERSON_URL = "http://localhost:8080/library/people/new";
     private static final String EDIT_PERSON_URL = "http://localhost:8080/library/people/edit/";
     private static final String DELETE_PERSON_URL = "http://localhost:8080/library/people/delete/";
+    private static final String GET_BOOKHOLDER_URL = "http://localhost:8080/library/people/bookholder/";
     private final RestTemplate restTemplate = new RestTemplate();
     
     public List<PersonDTO> getAllPeople() {
@@ -101,4 +102,31 @@ public class PersonService {
             return false;
         }
     }
+    
+    public PersonDTO getBookHolder(int bookId) {
+        try {
+            HttpHeaders headers = new HttpHeaders();
+            headers.set("Authorization", "Bearer " + JwtTokenUtil.getToken());
+            headers.setContentType(MediaType.APPLICATION_JSON);
+            
+            HttpEntity<String> entity = new HttpEntity<>(headers);
+            
+            ResponseEntity<PersonDTO> response = restTemplate.exchange(
+                GET_BOOKHOLDER_URL + bookId,
+                HttpMethod.GET,
+                entity,
+                new ParameterizedTypeReference<PersonDTO>() {}
+            );
+            
+            if (response.getStatusCode() == HttpStatus.OK) {
+                return response.getBody();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+    
+    
+    
 }

@@ -2,7 +2,6 @@ package io.github.zufarm.library.controllers;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -109,20 +108,21 @@ public class BookController {
 	    }
     }
 	
-	@PostMapping("/{id}/assign")
-	public String assign(@PathVariable("id") int bookId, @RequestParam("personId") int personId) {
-		Book book = bookService.findOne(bookId);
-		book.setBookHolder(peopleService.findOne(personId));
-		bookService.update(bookId, book);
-        return "redirect:/books/" + bookId;
+	@ResponseBody
+	@PostMapping("/assign")
+	public ResponseEntity<?> assign(@RequestBody Map<String, Integer> request) {
+            Integer bookId = request.get("bookId");
+            Integer personId = request.get("personId");
+            bookService.assingBook(bookId, personId);
+            return ResponseEntity.ok().build();  
     }
-	@PostMapping("/{id}/release")
-	public String release(@PathVariable("id") int bookId) {
-		Book book = bookService.findOne(bookId);
-		book.setBookHolder(null);
-		bookService.update(bookId, book);
-        return "redirect:/books/" + bookId;
+	
+	@PutMapping("/return/{id}")
+	public ResponseEntity<?> release(@PathVariable("id") int bookId) {
+		bookService.returnBook(bookId);
+		return ResponseEntity.ok().build(); 
     }
+	
 	public List<BookDTO> convertToBookDTO(List<Book> books) {
 		return books.stream()
         .map(book -> modelMapper.map(book, BookDTO.class))

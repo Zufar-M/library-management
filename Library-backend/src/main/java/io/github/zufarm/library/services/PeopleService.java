@@ -13,10 +13,12 @@ import io.github.zufarm.library.repositories.PeopleRepository;
 public class PeopleService {
 
 	private final PeopleRepository peopleRepository;
+	private final BookService bookService;
 	
 	@Autowired
-	public PeopleService(PeopleRepository peopleRepository) {
+	public PeopleService(PeopleRepository peopleRepository, BookService bookService) {
 		this.peopleRepository = peopleRepository;
+		this.bookService = bookService;
 	}
 
 	public List<Person> findAll() {
@@ -48,5 +50,9 @@ public class PeopleService {
 	@Transactional
 	public void delete(int id) {
 		peopleRepository.deleteById(id);
+	}
+	
+	public Person getBookHolder(int bookId) {
+		return bookService.findOne(bookId).getBookHolder();
 	}
 }

@@ -43,7 +43,7 @@ public class PersonController {
 	@ResponseBody
 	@GetMapping()
 	public List<PersonDTO> getAllPeople() {
-		return convertToPersonDTO(peopleService.findAll());
+		return convertToListPersonDTO(peopleService.findAll());
     }
 	
 	@PostMapping("/new")
@@ -67,13 +67,9 @@ public class PersonController {
         return "redirect:/people";
     }
 	
-	@GetMapping("/{id}")
-    public String getPersonById(@PathVariable("id") int id, Model model) {
-		Person person = peopleService.findOne(id);
-        model.addAttribute("person", person);
-        model.addAttribute("personBooks", person.getBooks());
-        return "people/one";
-        
+	@GetMapping("/bookholder/{id}")
+    public PersonDTO getBookHolder(@PathVariable("id") int Bookid) {
+		return convertToPersonDTO(peopleService.getBookHolder(Bookid));
     }
 	
 	@PutMapping("/edit/{id}")
@@ -111,12 +107,15 @@ public class PersonController {
 	    }
     }
 	
-	public List<PersonDTO> convertToPersonDTO(List<Person> people) {
+	public List<PersonDTO> convertToListPersonDTO(List<Person> people) {
 		return people.stream().map(person -> modelMapper.map(person, PersonDTO.class)).collect(Collectors.toList());
 	}
 	
 	public Person convertToPerson(PersonDTO personDTO) {
 		return modelMapper.map(personDTO, Person.class);
+	}
+	public PersonDTO convertToPersonDTO(Person person) {
+		return modelMapper.map(person, PersonDTO.class);
 	}
 	
 }
