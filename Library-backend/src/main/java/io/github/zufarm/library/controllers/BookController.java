@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -80,29 +81,32 @@ public class BookController {
         return "books/one";
     }
 	
-	@GetMapping("/{id}/edit")
-    public String edit(Model model, @PathVariable("id") int id) {
-		Book book = bookService.findOne(id);
-        model.addAttribute("book", book);
-        return "books/edit";
-    }
 	
-	@PatchMapping("/{id}")
-    public String updateBook(@ModelAttribute("book")  @Valid Book book, BindingResult bindingResult, @PathVariable("id") int id) {
-		bookValidator.validate(book, bindingResult);
-		if (bindingResult.hasErrors()) {
-            return "books/edit";
-        }
-		Person bookHolder = bookService.findOne(id).getBookHolder();
-        book.setBookHolder(bookHolder);
+	
+	@PutMapping("/edit/{id}")
+    public ResponseEntity<?> updateBook(@RequestBody @Valid BookDTO bookDTO, BindingResult bindingResult, @PathVariable("id") int id) {
+		
+		// TO-DO
+//		bookValidator.validate(book, bindingResult);
+//		if (bindingResult.hasErrors()) {
+//            return "books/edit";
+//        }
+		
+		Book book = convertToBook(bookDTO);
 		bookService.update(id, book);
-        return "redirect:/books";
+		
+        return ResponseEntity.ok("Книга обновлена");
     }
 	
-	@DeleteMapping("/{id}")
-    public String delete(@PathVariable("id") int id) {
-		bookService.delete(id);
-        return "redirect:/books";
+	@DeleteMapping("/delete/{id}")
+    public ResponseEntity<String> delete(@PathVariable("id") int id) {
+		try {
+	        bookService.delete(id);
+	        return ResponseEntity.ok("Книга успешно удалена");
+	    } catch (Exception e) {
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+	               .body("Ошибка при удалении книги");
+	    }
     }
 	
 	@PostMapping("/{id}/assign")

@@ -9,8 +9,10 @@ import org.springframework.web.client.RestTemplate;
 import java.util.List;
 
 public class BookService {
-    private static final String API_URL = "http://localhost:8080/library/books";
+    private static final String GET_BOOKS_URL = "http://localhost:8080/library/books";
     private static final String ADD_BOOK_URL = "http://localhost:8080/library/books/new";
+    private static final String EDIT_BOOK_URL = "http://localhost:8080/library/books/edit/";
+    private static final String DELETE_BOOK_URL = "http://localhost:8080/library/books/delete/";
     private final RestTemplate restTemplate = new RestTemplate();
     
     public List<BookDTO> getAllBooks() {
@@ -22,7 +24,7 @@ public class BookService {
             HttpEntity<String> entity = new HttpEntity<>(headers);
             
             ResponseEntity<List<BookDTO>> response = restTemplate.exchange(
-                API_URL,
+                GET_BOOKS_URL,
                 HttpMethod.GET,
                 entity,
                 new ParameterizedTypeReference<List<BookDTO>>() {}
@@ -58,5 +60,47 @@ public class BookService {
             return false;
         }
     }
+	    public boolean updateBook(BookDTO book) {
+	        try {
+	            HttpHeaders headers = new HttpHeaders();
+	            headers.set("Authorization", "Bearer " + JwtTokenUtil.getToken());
+	            headers.setContentType(MediaType.APPLICATION_JSON);
+	            
+	            HttpEntity<BookDTO> entity = new HttpEntity<>(book, headers);
+	            
+	            ResponseEntity<Void> response = restTemplate.exchange(
+	                EDIT_BOOK_URL + book.getId(),
+	                HttpMethod.PUT,
+	                entity,
+	                Void.class
+	            );
+	            
+	            return response.getStatusCode() == HttpStatus.OK;
+	        } catch (Exception e) {
+	            e.printStackTrace();
+	            return false;
+	        }
+	    }
+	    
+	    public boolean deleteBook(int id) {
+	        try {
+	            HttpHeaders headers = new HttpHeaders();
+	            headers.set("Authorization", "Bearer " + JwtTokenUtil.getToken());
+	            
+	            HttpEntity<String> entity = new HttpEntity<>(headers);
+	            
+	            ResponseEntity<Void> response = restTemplate.exchange(
+	                DELETE_BOOK_URL + id,
+	                HttpMethod.DELETE,
+	                entity,
+	                Void.class
+	            );
+	            
+	            return response.getStatusCode() == HttpStatus.OK;
+	        } catch (Exception e) {
+	            e.printStackTrace();
+	            return false;
+	        }
+	    }
     
 }

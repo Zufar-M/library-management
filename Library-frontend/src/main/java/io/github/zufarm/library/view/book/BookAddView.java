@@ -36,7 +36,7 @@ public class BookAddView {
         Button submitBtn = new Button("Сохранить");
         submitBtn.setOnAction(e -> {
             try {
-                BookDTO book = new BookDTO(nameField.getText(), authorField.getText(), Integer.parseInt(yearField.getText()) );
+                BookDTO book = new BookDTO(0, nameField.getText(), authorField.getText(), Integer.parseInt(yearField.getText()));
 
                 bookService.addBook(book);
                 onSuccess.run();

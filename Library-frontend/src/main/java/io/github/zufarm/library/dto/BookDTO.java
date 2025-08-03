@@ -10,18 +10,24 @@ public class BookDTO {
     private final SimpleStringProperty name;
     private final SimpleStringProperty author;
     private final SimpleIntegerProperty year;
-
+    private final int id; 
     @JsonCreator
     public BookDTO(
+    		@JsonProperty("id") int id,
             @JsonProperty("name") String name,
             @JsonProperty("author") String author,
             @JsonProperty("year") int year) {
         this.name = new SimpleStringProperty(name);
         this.author = new SimpleStringProperty(author);
         this.year = new SimpleIntegerProperty(year);
+        this.id = id;
     }
-
-    public String getName() {
+    
+    public int getId() {
+		return id;
+	}
+    
+	public String getName() {
         return name.get();
     }
 

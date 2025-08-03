@@ -7,6 +7,7 @@ import javafx.collections.ObservableList;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.HBox;
@@ -34,6 +35,16 @@ public class BookListView {
         
         table.getColumns().addAll(titleCol, authorCol, yearCol);
         table.setItems(books);
+        table.setRowFactory(tv -> {
+            TableRow<BookDTO> row = new TableRow<>();
+            row.setOnMouseClicked(event -> {
+                if (event.getClickCount() == 2 && !row.isEmpty()) {
+                    BookDTO rowData = row.getItem();
+                    new BookDetailView().showDetail(rowData, this::loadBooks);
+                }
+            });
+            return row;
+        });
     }
     
     private void loadBooks() {

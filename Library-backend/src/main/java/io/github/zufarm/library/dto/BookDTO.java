@@ -7,6 +7,8 @@ import jakarta.validation.constraints.Size;
 
 public class BookDTO {
 	
+	private int id;
+	
 	@NotBlank(message = "Название книги не может быть пустым")
 	@Size(min = 1, max = 100, message = "Название книги должно быть от 1 до 100 символов")
 	private String name;
@@ -18,6 +20,15 @@ public class BookDTO {
 	@Min(value = 1000, message = "Год издания должен быть не меньше 1000")
     @Max(value = 2100, message = "Год издания должен быть не больше 2100")
 	private int year;
+
+	
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
+	}
 
 	public String getName() {
 		return name;
