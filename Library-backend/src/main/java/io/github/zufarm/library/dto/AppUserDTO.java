@@ -5,6 +5,9 @@ import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
 
 public class AppUserDTO {
+	
+	private int id;
+	
 	@NotEmpty(message = "Имя не должно быть пустым")
     @Size(min = 2, max = 100, message = "Имя должно быть от 2 до 100 символов длиной")
     private String username;
@@ -13,6 +16,8 @@ public class AppUserDTO {
     private int yearOfBirth;
 
     private String password;
+    
+    private String role;
 
 	public String getUsername() {
 		return username;
@@ -37,4 +42,23 @@ public class AppUserDTO {
 	public void setPassword(String password) {
 		this.password = password;
 	}
+
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
+	}
+
+	public String getRole() {
+		return role;
+	}
+
+	public void setRole(String role) {
+		this.role = role;
+	}
+	
+	
+	
 }

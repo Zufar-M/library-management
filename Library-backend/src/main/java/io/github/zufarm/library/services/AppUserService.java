@@ -2,12 +2,15 @@ package io.github.zufarm.library.services;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
+import io.github.zufarm.library.dto.AppUserDTO;
+import io.github.zufarm.library.dto.BookDTO;
 import io.github.zufarm.library.models.AppUser;
 import io.github.zufarm.library.repositories.AppUserRepository;
 import io.github.zufarm.library.util.AppUserNotFoundException;
@@ -18,11 +21,13 @@ public class AppUserService {
 
 	private final AppUserRepository appUserRepository;
 	private final PasswordEncoder passwordEncoder;
+	private final ModelMapper modelMapper;
 
 	@Autowired
-	public AppUserService(AppUserRepository appUserRepository, PasswordEncoder passwordEncoder) {
+	public AppUserService(AppUserRepository appUserRepository, PasswordEncoder passwordEncoder, ModelMapper modelMapper) {
 		this.appUserRepository = appUserRepository;
 		this.passwordEncoder = passwordEncoder;
+		this.modelMapper = modelMapper;
 	}
 	
 	public Optional<AppUser> findByUserName(String userName) {
@@ -32,7 +37,6 @@ public class AppUserService {
 	@Transactional
 	public void register(AppUser appUser) {
 		appUser.setPassword(passwordEncoder.encode(appUser.getPassword()));
-		appUser.setRole("ROLE_USER");
 		appUserRepository.save(appUser);
 	}
 	
@@ -43,5 +47,30 @@ public class AppUserService {
 	public AppUser findById(int id) {
 		return appUserRepository.findById(id).orElseThrow(AppUserNotFoundException::new);
 	}
+	
+	public AppUser convertToAppUser(AppUserDTO appUserDTO) {
+		if (appUserDTO.getRole().equals("Администратор")) {
+			appUserDTO.setRole("ROLE_ADMIN");
+		}
+		else {
+			appUserDTO.setRole("ROLE_USER");
+		}
+		return this.modelMapper.map(appUserDTO, AppUser.class);
+	}
+	
+	public List<AppUserDTO> convertToAppUserDTOList(List<AppUser> appUserDTO) {
+		return appUserDTO.stream()
+		        .map(appUser -> {
+		            AppUserDTO dto = modelMapper.map(appUser, AppUserDTO.class);
+		            if (dto.getRole().equals("ROLE_ADMIN")) {
+		                dto.setRole("Администратор");
+		            } else {
+		                dto.setRole("Сотрудник");
+		            }
+		            return dto;
+		        })
+		        .collect(Collectors.toList());
+	}
+
 	
 }

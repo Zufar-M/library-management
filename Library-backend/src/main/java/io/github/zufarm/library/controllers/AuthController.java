@@ -2,12 +2,11 @@ package io.github.zufarm.library.controllers;
 import java.util.Map;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -27,7 +26,6 @@ public class AuthController {
 	private final AppUserValidator appUserValidator;
 	private final AppUserService appUserService;
 	private final JWTUtil jwtUtil;
-	private final ModelMapper modelMapper;
 	private final AuthenticationManager authenticationManager;
 	
 	@Autowired
@@ -36,40 +34,19 @@ public class AuthController {
 		this.appUserValidator = appUserValidator;
 		this.appUserService = appUserService;
 		this.jwtUtil = jwtUtil;
-		this.modelMapper = modelMapper;
 		this.authenticationManager = authenticationManager;
 	}
 
-	@GetMapping("/login")
-	public String loginPage() {
-		return "auth/login";
-	}
-	
-	@GetMapping("/registration")
-	public String registrationPage(@ModelAttribute("appUser") AppUser appUser) {
-		return "auth/registration";
-	}
-	
+
 	@PostMapping("/registration")
-	public Map<String, String> performRegistration(@RequestBody @Valid AppUserDTO appUserDTO, BindingResult bindingResult) {
-		
-		
-		AppUser appUser = convertToAppUser(appUserDTO);
-		
-		appUserValidator.validate(appUser, bindingResult);
-		
-		if (bindingResult.hasErrors())
-			return Map.of("message", "Ошибка!");
-		
+	public ResponseEntity<?> performRegistration(@RequestBody @Valid AppUserDTO appUserDTO, BindingResult bindingResult) {
+		AppUser appUser = appUserService.convertToAppUser(appUserDTO);
 		appUserService.register(appUser);
-		
 		String token = jwtUtil.generateToken(appUser.getUsername());
-		return Map.of("jwt-token", token);
+		return ResponseEntity.ok().build();
 	}
 	
-	public AppUser convertToAppUser(AppUserDTO appUserDTO) {
-		return this.modelMapper.map(appUserDTO, AppUser.class);
-	}
+	
 	
 	@PostMapping("/login")
 	public Map<String, String> performLogin(@RequestBody AuthenticationDTO authenticationDTO) {
