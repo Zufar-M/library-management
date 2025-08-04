@@ -1,6 +1,8 @@
 package io.github.zufarm.library.services;
 import io.github.zufarm.library.dto.BookDTO;
+import io.github.zufarm.library.dto.LoginResponse;
 import io.github.zufarm.library.util.JwtTokenUtil;
+
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
 import org.springframework.web.client.HttpClientErrorException;
@@ -18,7 +20,6 @@ public class BookService {
     private static final String ASSIGN_BOOK_URL = "http://localhost:8080/library/books/assign";
     private static final String GET_BOOKS_BY_HOLDER_URL = "http://localhost:8080/library/books/holder/";
     private final RestTemplate restTemplate = new RestTemplate();
-    
     
     public List<BookDTO> getAllBooks() {
         try {
