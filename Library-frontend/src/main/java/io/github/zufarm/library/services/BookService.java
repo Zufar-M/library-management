@@ -126,10 +126,7 @@ public class BookService {
 	        } catch (HttpClientErrorException.NotFound e) {
 	            System.err.println("Книга не найдена или не выдана: " + bookId);
 	            return false;
-	        } catch (Exception e) {
-	            e.printStackTrace();
-	            return false;
-	        }
+	        } 
 	    }
 	    
 	    public boolean assignBook(int bookId, int personId) {
@@ -158,10 +155,7 @@ public class BookService {
 	                System.err.println("Ошибка выдачи книги: " + e.getResponseBodyAsString());
 	            }
 	            return false;
-	        } catch (Exception e) {
-	            e.printStackTrace();
-	            return false;
-	        }
+	        } 
 	    }
     
 }

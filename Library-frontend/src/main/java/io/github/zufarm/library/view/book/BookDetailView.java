@@ -9,8 +9,10 @@ import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.StringConverter;
@@ -29,16 +31,27 @@ public class BookDetailView {
         detailStage = new Stage();
         detailStage.initModality(Modality.APPLICATION_MODAL);
         detailStage.setTitle("Детали книги");
+        detailStage.setMinWidth(400);
+        detailStage.setMinHeight(350);
 
         grid = new GridPane();
         grid.setHgap(10);
         grid.setVgap(10);
         grid.setPadding(new Insets(20));
 
+        ColumnConstraints col1 = new ColumnConstraints();
+        col1.setMinWidth(100);
+        col1.setPrefWidth(100);
+        
+        ColumnConstraints col2 = new ColumnConstraints();
+        col2.setMinWidth(200);
+        col2.setPrefWidth(200);
+        col2.setHgrow(Priority.ALWAYS);
+        
+        grid.getColumnConstraints().addAll(col1, col2);
+
         addBookInfo();
-        
         updateAssignmentSection();
-        
         addControlButtons();
 
         Scene scene = new Scene(grid);
@@ -48,8 +61,13 @@ public class BookDetailView {
     
     private void addBookInfo() {
         Label nameLabel = new Label(book.getName());
+        nameLabel.setMaxWidth(Double.MAX_VALUE);
+        
         Label authorLabel = new Label(book.getAuthor());
+        authorLabel.setMaxWidth(Double.MAX_VALUE);
+        
         Label yearLabel = new Label(String.valueOf(book.getYear()));
+        yearLabel.setMaxWidth(Double.MAX_VALUE);
 
         grid.add(new Label("Название:"), 0, 0);
         grid.add(nameLabel, 1, 0);
@@ -60,6 +78,10 @@ public class BookDetailView {
     }
     
     private void updateAssignmentSection() {
+
+        double currentWidth = detailStage.getWidth();
+        
+
         grid.getChildren().removeIf(node -> 
             GridPane.getRowIndex(node) != null && 
             GridPane.getRowIndex(node) >= 3 && 
@@ -73,17 +95,20 @@ public class BookDetailView {
             
             if (assignedPerson != null) {
                 Label personLabel = new Label(assignedPerson.getFullName() + " (" + assignedPerson.getBirthYear() + ")");
+                personLabel.setMaxWidth(Double.MAX_VALUE);
                 grid.add(personLabel, 1, 3);
                 
                 Button returnBtn = new Button("Вернуть книгу");
+                returnBtn.setMaxWidth(Double.MAX_VALUE);
                 returnBtn.setOnAction(e -> returnBook());
                 grid.add(returnBtn, 1, 4);
             } else {
                 ComboBox<PersonDTO> personCombo = new ComboBox<>();
+                personCombo.setMaxWidth(Double.MAX_VALUE);
                 personCombo.setConverter(new StringConverter<PersonDTO>() {
                     @Override
                     public String toString(PersonDTO person) {
-                        return person.getFullName() + " (" + person.getBirthYear() + ")";
+                        return person != null ? person.getFullName() + " (" + person.getBirthYear() + ")" : "Не выдана";
                     }
 
                     @Override
@@ -97,40 +122,60 @@ public class BookDetailView {
                 grid.add(personCombo, 1, 3);
                 
                 Button assignBtn = new Button("Выдать");
-                assignBtn.setOnAction(e -> assignBook(personCombo.getSelectionModel().getSelectedItem()));
+                assignBtn.setMaxWidth(Double.MAX_VALUE);
+                assignBtn.setOnAction(e -> {
+                    PersonDTO selected = personCombo.getSelectionModel().getSelectedItem();
+                    if (selected != null) {
+                        assignBook(selected);
+                    } else {
+                        showAlert(Alert.AlertType.WARNING, "Предупреждение", "Выберите человека из списка");
+                    }
+                });
                 grid.add(assignBtn, 1, 4);
             }
         } catch (Exception e) {
             e.printStackTrace();
-            grid.add(new Label("Ошибка загрузки данных"), 1, 3);
+            Label errorLabel = new Label("Ошибка загрузки данных");
+            errorLabel.setStyle("-fx-text-fill: red;");
+            errorLabel.setMaxWidth(Double.MAX_VALUE);
+            grid.add(errorLabel, 1, 3);
         }
+        
+
+        detailStage.setWidth(currentWidth);
     }
     
     private void returnBook() {
-        if (bookService.returnBook(book.getId())) {
-            updateAssignmentSection();
-            onUpdate.run();
-        } else {
-            showAlert(Alert.AlertType.ERROR, "Ошибка", "Не удалось вернуть книгу");
+        try {
+            if (bookService.returnBook(book.getId())) {
+                updateAssignmentSection();
+                onUpdate.run();
+            } else {
+                showAlert(Alert.AlertType.ERROR, "Ошибка", "Не удалось вернуть книгу");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            showAlert(Alert.AlertType.ERROR, "Ошибка", "Произошла ошибка при возврате книги");
         }
     }
     
     private void assignBook(PersonDTO person) {
-        if (person == null) {
-            showAlert(Alert.AlertType.WARNING, "Предупреждение", "Выберите человека из списка");
-            return;
-        }
-        
-        if (bookService.assignBook(book.getId(), person.getId())) {
-            updateAssignmentSection();
-            onUpdate.run();
-        } else {
-            showAlert(Alert.AlertType.ERROR, "Ошибка", "Не удалось выдать книгу");
+        try {
+            if (bookService.assignBook(book.getId(), person.getId())) {
+                updateAssignmentSection();
+                onUpdate.run();
+            } else {
+                showAlert(Alert.AlertType.ERROR, "Ошибка", "Не удалось выдать книгу");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            showAlert(Alert.AlertType.ERROR, "Ошибка", "Произошла ошибка при выдаче книги");
         }
     }
     
     private void addControlButtons() {
         HBox buttonBox = new HBox(10);
+        buttonBox.setStyle("-fx-padding: 10 0 0 0;");
         
         Button editBtn = new Button("Редактировать");
         editBtn.setOnAction(e -> showEditForm());
@@ -140,13 +185,14 @@ public class BookDetailView {
         deleteBtn.setOnAction(e -> handleDelete());
 
         buttonBox.getChildren().addAll(editBtn, deleteBtn);
-        grid.add(buttonBox, 1, 5);
+        grid.add(buttonBox, 0, 6, 2, 1);
     }
     
     private void showEditForm() {
         Stage stage = new Stage();
         stage.initModality(Modality.APPLICATION_MODAL);
         stage.setTitle("Редактировать книгу");
+        stage.setMinWidth(300);
 
         GridPane editGrid = new GridPane();
         editGrid.setHgap(10);
@@ -197,11 +243,16 @@ public class BookDetailView {
 
         confirmation.showAndWait().ifPresent(response -> {
             if (response == ButtonType.OK) {
-                if (bookService.deleteBook(book.getId())) {
-                    onUpdate.run();
-                    detailStage.close(); 
-                } else {
-                    showAlert(Alert.AlertType.ERROR, "Ошибка", "Не удалось удалить книгу");
+                try {
+                    if (bookService.deleteBook(book.getId())) {
+                        onUpdate.run();
+                        detailStage.close(); 
+                    } else {
+                        showAlert(Alert.AlertType.ERROR, "Ошибка", "Не удалось удалить книгу");
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    showAlert(Alert.AlertType.ERROR, "Ошибка", "Произошла ошибка при удалении книги");
                 }
             }
         });

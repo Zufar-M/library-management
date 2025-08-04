@@ -3,6 +3,7 @@ import io.github.zufarm.library.dto.PersonDTO;
 import io.github.zufarm.library.util.JwtTokenUtil;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 import java.util.List;
 
@@ -117,16 +118,14 @@ public class PersonService {
                 entity,
                 new ParameterizedTypeReference<PersonDTO>() {}
             );
-            
-            if (response.getStatusCode() == HttpStatus.OK) {
                 return response.getBody();
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-    
-    
-    
+	        } 
+	        catch (HttpClientErrorException.NotFound e) {   
+	        	return null;
+	        }
+	        catch (Exception e) {
+	            e.printStackTrace();
+	            return null;
+	        } 
+    }   
 }

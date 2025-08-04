@@ -1,10 +1,15 @@
 package io.github.zufarm.library.services;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+
 import org.hibernate.Hibernate;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import io.github.zufarm.library.dto.PersonDTO;
 import io.github.zufarm.library.models.Person;
 import io.github.zufarm.library.repositories.PeopleRepository;
 
@@ -13,12 +18,12 @@ import io.github.zufarm.library.repositories.PeopleRepository;
 public class PeopleService {
 
 	private final PeopleRepository peopleRepository;
-	private final BookService bookService;
+	private final ModelMapper modelMapper;
 	
 	@Autowired
-	public PeopleService(PeopleRepository peopleRepository, BookService bookService) {
+	public PeopleService(PeopleRepository peopleRepository, ModelMapper modelMapper) {
 		this.peopleRepository = peopleRepository;
-		this.bookService = bookService;
+		this.modelMapper = modelMapper;
 	}
 
 	public List<Person> findAll() {
@@ -53,6 +58,17 @@ public class PeopleService {
 	}
 	
 	public Person getBookHolder(int bookId) {
-		return bookService.findOne(bookId).getBookHolder();
+        return peopleRepository.findPersonByBookId(bookId);
+    }
+	
+	public List<PersonDTO> convertToListPersonDTO(List<Person> people) {
+		return people.stream().map(person -> modelMapper.map(person, PersonDTO.class)).collect(Collectors.toList());
+	}
+	
+	public Person convertToPerson(PersonDTO personDTO) {
+		return modelMapper.map(personDTO, Person.class);
+	}
+	public PersonDTO convertToPersonDTO(Person person) {
+		return modelMapper.map(person, PersonDTO.class);
 	}
 }
