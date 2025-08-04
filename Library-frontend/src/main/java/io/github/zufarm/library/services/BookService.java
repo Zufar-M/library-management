@@ -16,6 +16,7 @@ public class BookService {
     private static final String DELETE_BOOK_URL = "http://localhost:8080/library/books/delete/";
     private static final String RETURN_BOOK_URL = "http://localhost:8080/library/books/return/";
     private static final String ASSIGN_BOOK_URL = "http://localhost:8080/library/books/assign";
+    private static final String GET_BOOKS_BY_HOLDER_URL = "http://localhost:8080/library/books/holder/";
     private final RestTemplate restTemplate = new RestTemplate();
     
     
@@ -156,6 +157,32 @@ public class BookService {
 	            }
 	            return false;
 	        } 
+	    }
+	    
+	    public List<BookDTO> getBooksByHolder(int personId) {
+	        try {
+	            HttpHeaders headers = new HttpHeaders();
+	            headers.set("Authorization", "Bearer " + JwtTokenUtil.getToken());
+	            headers.setContentType(MediaType.APPLICATION_JSON);
+	            
+	            HttpEntity<String> entity = new HttpEntity<>(headers);
+	            
+	            ResponseEntity<List<BookDTO>> response = restTemplate.exchange(
+	                GET_BOOKS_BY_HOLDER_URL + personId,
+	                HttpMethod.GET,
+	                entity,
+	                new ParameterizedTypeReference<List<BookDTO>>() {}
+	            );
+	            
+	            if (response.getStatusCode() == HttpStatus.OK) {
+	                return response.getBody();
+	            }
+	        } catch (HttpClientErrorException.NotFound e) {
+	            return List.of();
+	        } catch (Exception e) {
+	            e.printStackTrace();
+	        }
+	        return List.of();
 	    }
     
 }

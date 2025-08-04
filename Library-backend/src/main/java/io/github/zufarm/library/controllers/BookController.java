@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import io.github.zufarm.library.dto.BookDTO;
 import io.github.zufarm.library.models.Book;
+import io.github.zufarm.library.models.Person;
 import io.github.zufarm.library.services.BookService;
 import io.github.zufarm.library.services.PeopleService;
 import io.github.zufarm.library.util.BookValidator;
@@ -73,5 +74,15 @@ public class BookController {
 		bookService.returnBook(bookId);
 		return ResponseEntity.ok().build(); 
     }
+	
+	@GetMapping("/holder/{personId}")
+	public ResponseEntity<List<BookDTO>> getBooksByHolder(@PathVariable int personId) {
+	    Person person = peopleService.findOne(personId);
+	    List<BookDTO> personBooks = bookService.convertToBookListDTO(person.getBooks());
+	    if (personBooks == null) {
+	    	ResponseEntity.notFound().build();
+	    }
+	    return ResponseEntity.ok(personBooks);
+	}
 	
 }
