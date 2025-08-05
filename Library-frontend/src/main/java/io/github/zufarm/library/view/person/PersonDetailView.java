@@ -1,5 +1,4 @@
 package io.github.zufarm.library.view.person;
-
 import java.util.List;
 import io.github.zufarm.library.dto.BookDTO;
 import io.github.zufarm.library.dto.PersonDTO;

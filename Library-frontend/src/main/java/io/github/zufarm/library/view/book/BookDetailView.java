@@ -1,5 +1,4 @@
 package io.github.zufarm.library.view.book;
-
 import io.github.zufarm.library.dto.BookDTO;
 import io.github.zufarm.library.dto.PersonDTO;
 import io.github.zufarm.library.services.BookService;
@@ -16,6 +15,8 @@ import javafx.scene.layout.Priority;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.StringConverter;
+import javafx.collections.transformation.FilteredList;
+import javafx.scene.layout.VBox;
 
 public class BookDetailView {
     private final BookService bookService = new BookService();
@@ -109,6 +110,15 @@ public class BookDetailView {
                 returnBtn.setOnAction(e -> returnBook());
                 grid.add(returnBtn, 1, 5);
             } else {
+                
+                VBox searchContainer = new VBox(5);
+                
+                
+                TextField searchField = new TextField();
+                searchField.setPromptText("Поиск...");
+                searchField.getStyleClass().add("admin-field");
+                
+                
                 ComboBox<PersonDTO> personCombo = new ComboBox<>();
                 personCombo.getStyleClass().add("admin-field");
                 personCombo.setConverter(new StringConverter<PersonDTO>() {
@@ -123,9 +133,28 @@ public class BookDetailView {
                     }
                 });
                 
-                ObservableList<PersonDTO> people = FXCollections.observableArrayList(personService.getAllPeople());
-                personCombo.setItems(people);
-                grid.add(personCombo, 1, 4);
+               
+                ObservableList<PersonDTO> allPeople = FXCollections.observableArrayList(personService.getAllPeople());
+                FilteredList<PersonDTO> filteredPeople = new FilteredList<>(allPeople, p -> true);
+                
+               
+                searchField.textProperty().addListener((obs, oldValue, newValue) -> {
+                    filteredPeople.setPredicate(person -> {
+                        if (newValue == null || newValue.isEmpty()) {
+                            return true;
+                        }
+                        
+                        String lowerCaseFilter = newValue.toLowerCase();
+                        return person.getFullName().toLowerCase().contains(lowerCaseFilter) || 
+                               String.valueOf(person.getBirthYear()).contains(lowerCaseFilter);
+                    });
+                });
+                
+                personCombo.setItems(filteredPeople);
+                
+                
+                searchContainer.getChildren().addAll(searchField, personCombo);
+                grid.add(searchContainer, 1, 4);
                 
                 Button assignBtn = new Button("Выдать");
                 assignBtn.getStyleClass().addAll("button", "book-action-button");

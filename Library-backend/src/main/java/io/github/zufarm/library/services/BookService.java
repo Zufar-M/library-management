@@ -41,7 +41,6 @@ private final ModelMapper modelMapper;
 	        return book;
 	    }
 	    return null;
-		
 	}
 
 	@Transactional
@@ -52,6 +51,7 @@ private final ModelMapper modelMapper;
 	@Transactional
 	public void update(int id, Book updatedBook) {
 		updatedBook.setId(id);
+		updatedBook.setBookHolder(peopleService.getBookHolder(id));
 		bookRepository.save(updatedBook);
 	}
 	

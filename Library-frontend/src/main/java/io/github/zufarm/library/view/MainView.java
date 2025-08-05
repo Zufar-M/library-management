@@ -1,7 +1,7 @@
 package io.github.zufarm.library.view;
 import io.github.zufarm.library.util.JwtTokenUtil;
 import io.github.zufarm.library.util.SceneManager;
-import io.github.zufarm.library.view.admin.AdminPanelView;
+import io.github.zufarm.library.view.admin.AdminListView;
 import io.github.zufarm.library.view.auth.LoginView;
 import io.github.zufarm.library.view.book.BookListView;
 import io.github.zufarm.library.view.person.PersonListView;
@@ -51,7 +51,7 @@ public class MainView {
         if (JwtTokenUtil.getRole().equals("ROLE_ADMIN")) {
             Tab adminTab = new Tab("Администрирование");
             adminTab.setClosable(false);
-            adminTab.setContent(new AdminPanelView().getView());
+            adminTab.setContent(new AdminListView().getView());
             tabPane.getTabs().add(adminTab);
         }
         

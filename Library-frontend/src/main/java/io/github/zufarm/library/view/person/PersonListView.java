@@ -1,5 +1,4 @@
 package io.github.zufarm.library.view.person;
-
 import io.github.zufarm.library.services.PersonService;
 import io.github.zufarm.library.dto.PersonDTO;
 import javafx.collections.FXCollections;
@@ -72,9 +71,6 @@ public class PersonListView {
         searchField.getStyleClass().add("search-field");
         searchField.setPromptText("Поиск по имени...");
         
-        Button refreshBtn = new Button("Обновить");
-        refreshBtn.getStyleClass().add("refresh-button");
-        refreshBtn.setOnAction(e -> loadPeople());
         
         Button addPersonBtn = new Button("Добавить нового читателя");
         addPersonBtn.getStyleClass().add("add-button");
@@ -84,7 +80,7 @@ public class PersonListView {
         
         HBox buttonPanel = new HBox(10);
         buttonPanel.getStyleClass().add("button-panel");
-        buttonPanel.getChildren().addAll(refreshBtn, addPersonBtn);
+        buttonPanel.getChildren().addAll(addPersonBtn);
         
         layout.getChildren().addAll(searchField, table, buttonPanel);
         return layout;

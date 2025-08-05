@@ -70,26 +70,22 @@ public class BookListView {
     }
     
     public Parent getView() {
-        VBox layout = new VBox();
+        VBox layout = new VBox(10);
         layout.getStyleClass().add("book-list-container");
         
         searchField = new TextField();
         searchField.setPromptText("Поиск по названию...");
-        searchField.getStyleClass().add("book-search-field");
-        
-        Button refreshBtn = new Button("Обновить");
-        refreshBtn.getStyleClass().add("book-action-button");
-        refreshBtn.setOnAction(e -> loadBooks());
+        searchField.getStyleClass().add("search-field");
         
         Button addBookBtn = new Button("Добавить книгу");
-        addBookBtn.getStyleClass().addAll("book-action-button", "book-add-button");
+        addBookBtn.getStyleClass().addAll("button", "add-button");
         addBookBtn.setOnAction(e -> {
             new BookAddView().showForm(this::loadBooks);
         });
         
-        HBox buttonPanel = new HBox();
-        buttonPanel.getStyleClass().add("book-button-panel");
-        buttonPanel.getChildren().addAll(refreshBtn, addBookBtn);
+        HBox buttonPanel = new HBox(10);
+        buttonPanel.getStyleClass().add("button-panel");
+        buttonPanel.getChildren().addAll(addBookBtn);
         
         layout.getChildren().addAll(searchField, table, buttonPanel);
         return layout;

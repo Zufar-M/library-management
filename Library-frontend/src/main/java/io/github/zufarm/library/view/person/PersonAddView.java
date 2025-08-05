@@ -1,5 +1,4 @@
 package io.github.zufarm.library.view.person;
-
 import io.github.zufarm.library.dto.PersonDTO;
 import io.github.zufarm.library.services.PersonService;
 import javafx.geometry.Insets;

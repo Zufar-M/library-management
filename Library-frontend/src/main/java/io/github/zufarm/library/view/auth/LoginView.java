@@ -1,5 +1,4 @@
 package io.github.zufarm.library.view.auth;
-
 import io.github.zufarm.library.controllers.AuthController;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -18,7 +17,6 @@ public class LoginView {
     }
 
     private VBox createView() {
-        // Создание элементов UI
         Text title = new Text("Вход в систему");
         title.getStyleClass().add("login-title");
 
@@ -37,10 +35,9 @@ public class LoginView {
         loginButton.getStyleClass().add("login-button");
         loginButton.setDefaultButton(true);
 
-        // Настройка контроллера
+        
         controller.setup(usernameField, passwordField, errorLabel, loginButton);
 
-        // Компоновка
         VBox layout = new VBox(10, 
             title,
             new Label("Логин:"),

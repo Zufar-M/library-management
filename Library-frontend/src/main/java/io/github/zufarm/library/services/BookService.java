@@ -1,8 +1,6 @@
 package io.github.zufarm.library.services;
 import io.github.zufarm.library.dto.BookDTO;
-import io.github.zufarm.library.dto.LoginResponse;
 import io.github.zufarm.library.util.JwtTokenUtil;
-
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
 import org.springframework.web.client.HttpClientErrorException;
