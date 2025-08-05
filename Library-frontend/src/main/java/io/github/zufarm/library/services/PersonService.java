@@ -14,7 +14,7 @@ public class PersonService {
     private static final String DELETE_PERSON_URL = "http://localhost:8080/library/people/delete/";
     private static final String GET_BOOKHOLDER_URL = "http://localhost:8080/library/people/bookholder/";
     private final RestTemplate restTemplate = new RestTemplate();
-    
+   
     public List<PersonDTO> getAllPeople() {
         try {
             HttpHeaders headers = new HttpHeaders();

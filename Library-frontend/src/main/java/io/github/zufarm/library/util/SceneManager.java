@@ -13,7 +13,7 @@ public class SceneManager {
     }
     
     public static void switchScene(Parent root) {
-        Scene scene = new Scene(root, 800, 600);
+        Scene scene = new Scene(root, 900, 600);
         scene.getStylesheets().add(SceneManager.class.getResource("/css/styles.css").toExternalForm());
         primaryStage.setScene(scene);
         primaryStage.centerOnScreen();

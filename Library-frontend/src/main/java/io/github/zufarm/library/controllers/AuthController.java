@@ -1,8 +1,8 @@
 package io.github.zufarm.library.controllers;
-
-import io.github.zufarm.library.dto.JwtResponse;
 import io.github.zufarm.library.dto.LoginRequest;
+import io.github.zufarm.library.dto.LoginResponse;
 import io.github.zufarm.library.services.AuthService;
+import io.github.zufarm.library.util.JwtTokenUtil;
 import io.github.zufarm.library.util.SceneManager;
 import io.github.zufarm.library.view.MainView;
 import javafx.fxml.FXML;
@@ -26,8 +26,9 @@ public class AuthController {
         }
         
         try {
-            LoginRequest request = new LoginRequest(username, password);
-            JwtResponse response = authService.login(request);
+        	LoginRequest loginRequest = new LoginRequest(username, password);
+            LoginResponse response = authService.login(loginRequest);
+            JwtTokenUtil.initValues(response);
             if (response != null && response.getToken() != null) {
             	
                 SceneManager.switchScene(new MainView().getView());

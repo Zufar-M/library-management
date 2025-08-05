@@ -19,20 +19,18 @@ public class JWTUtil {
 	private String secret;
 	
 	public String generateToken(String username) {
-		Date expirationDate = Date.from(ZonedDateTime.now().plusMinutes(60).toInstant());
+		Date expirationDate = Date.from(ZonedDateTime.now().plusMinutes(1500).toInstant());
 		return JWT.create()
-				.withSubject("User details")
 				.withClaim("username", username)
 				.withIssuedAt(new Date())
-				.withIssuer("Mansurov")
+				.withIssuer("LibraryApp")
 				.withExpiresAt(expirationDate)
 				.sign(Algorithm.HMAC256(secret));
 	}
 	
 	public String validateTokenAndRetrieveClaim(String token) throws JWTVerificationException{
 		JWTVerifier verifier = JWT.require(Algorithm.HMAC256(secret))
-				.withSubject("User details")
-				.withIssuer("Mansurov")
+				.withIssuer("LibraryApp")
 				.build();
 		DecodedJWT jwt = verifier.verify(token);
 		return jwt.getClaim("username").asString();
