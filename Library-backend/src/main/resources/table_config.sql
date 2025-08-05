@@ -11,4 +11,6 @@ CREATE TABLE app_user (
 );
 
 CREATE INDEX idx_app_user_username ON app_user(username);
-CREATE INDEX idx_app_user_role ON app_user(role);
+
+
+

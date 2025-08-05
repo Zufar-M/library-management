@@ -48,10 +48,6 @@ public class AdminPanelView {
         passwordField.setMinWidth(200);
         passwordField.setPrefWidth(200);
         
-        TextField birthYearField = new TextField();
-        birthYearField.setMinWidth(200);
-        birthYearField.setPrefWidth(200);
-        
         ComboBox<String> roleComboBox = new ComboBox<>();
         roleComboBox.getItems().addAll("Сотрудник", "Администратор");
         roleComboBox.setValue("Сотрудник");
@@ -66,14 +62,12 @@ public class AdminPanelView {
         registerButton.setOnAction(e -> registerUser(
             usernameField.getText(),
             passwordField.getText(),
-            birthYearField.getText(),
             roleComboBox.getValue()
         ));
 
         form.add(titleLabel, 0, 0, 2, 1);
         addFormRow(form, "Имя:", usernameField, 1);
         addFormRow(form, "Пароль:", passwordField, 2);
-        addFormRow(form, "Год рождения:", birthYearField, 3);
         addFormRow(form, "Роль:", roleComboBox, 4);
         form.add(registerButton, 1, 5, 2, 1);
 
@@ -95,17 +89,12 @@ public class AdminPanelView {
         usernameCol.setPrefWidth(200);
         usernameCol.setStyle("-fx-font-size: 14;");
         
-        TableColumn<UserDTO, Integer> birthYearCol = new TableColumn<>("Год рождения");
-        birthYearCol.setCellValueFactory(new PropertyValueFactory<>("yearOfBirth"));
-        birthYearCol.setPrefWidth(120);
-        birthYearCol.setStyle("-fx-font-size: 14;");
-        
         TableColumn<UserDTO, String> roleCol = new TableColumn<>("Роль");
         roleCol.setCellValueFactory(new PropertyValueFactory<>("role"));
         roleCol.setPrefWidth(150);
         roleCol.setStyle("-fx-font-size: 14;");
         
-        userTable.getColumns().addAll(usernameCol, birthYearCol, roleCol);
+        userTable.getColumns().addAll(usernameCol, roleCol);
         userTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
         userTable.setItems(userData);
         userTable.setPrefWidth(450);
@@ -176,7 +165,7 @@ public class AdminPanelView {
                 user.setRole(roleComboBox.getValue());
                 return user;
             } else if (dialogButton == deleteButtonType) {
-                return new UserDTO(-1, "", 0, "", "");
+                return new UserDTO(-1, "", "", "");
             }
             return null;
         });
@@ -215,16 +204,14 @@ public class AdminPanelView {
         });
     }
 
-    private void registerUser(String username, String password, String birthYear, String role) {
+    private void registerUser(String username, String password, String role) {
         try {
-            int year = Integer.parseInt(birthYear);
-            UserDTO newUser = new UserDTO(0, username, year, role, password);
+            
+            UserDTO newUser = new UserDTO(0, username, role, password);
             userService.registerUser(newUser);
             loadUsers();
             showAlert("Успех", "Пользователь успешно зарегистрирован", Alert.AlertType.INFORMATION);
-        } catch (NumberFormatException e) {
-            showAlert("Ошибка", "Год рождения должен быть числом", Alert.AlertType.ERROR);
-        } catch (Exception e) {
+        }  catch (Exception e) {
             showAlert("Ошибка", e.getMessage(), Alert.AlertType.ERROR);
         }
     }

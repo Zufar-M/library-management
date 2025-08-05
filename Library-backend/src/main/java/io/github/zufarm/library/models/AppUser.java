@@ -10,13 +10,9 @@ public class AppUser {
 	    private int id;
 
 	    @NotEmpty(message = "Имя не должно быть пустым")
-	    @Size(min = 2, max = 100, message = "Имя должно быть от 2 до 100 символов длиной")
+	    @Size(min = 3, max = 50, message = "Имя должно быть от 3 до 50 символов длиной")
 	    @Column(name = "username")
 	    private String username;
-
-	    @Min(value = 1900, message = "Год рождения должен быть больше, чем 1900")
-	    @Column(name = "year_of_birth")
-	    private int yearOfBirth;
 
 	    @Column(name = "password")
 	    private String password;
@@ -35,9 +31,8 @@ public class AppUser {
 		public AppUser() {
 	    }
 
-	    public AppUser(String username, int yearOfBirth) {
+	    public AppUser(String username) {
 	        this.username = username;
-	        this.yearOfBirth = yearOfBirth;
 	    }
 
 	    public int getId() {
@@ -56,14 +51,6 @@ public class AppUser {
 	        this.username = username;
 	    }
 
-	    public int getYearOfBirth() {
-	        return yearOfBirth;
-	    }
-
-	    public void setYearOfBirth(int yearOfBirth) {
-	        this.yearOfBirth = yearOfBirth;
-	    }
-
 	    public String getPassword() {
 	        return password;
 	    }
@@ -71,11 +58,4 @@ public class AppUser {
 	    public void setPassword(String password) {
 	        this.password = password;
 	    }
-
-		@Override
-		public String toString() {
-			return "AppUser [id=" + id + ", username=" + username + ", yearOfBirth=" + yearOfBirth + ", password="
-					+ password + "]";
-		}
-
 	}

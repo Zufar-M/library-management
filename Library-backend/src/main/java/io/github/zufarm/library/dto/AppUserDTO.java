@@ -1,6 +1,4 @@
 package io.github.zufarm.library.dto;
-
-import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
 
@@ -9,11 +7,8 @@ public class AppUserDTO {
 	private int id;
 	
 	@NotEmpty(message = "Имя не должно быть пустым")
-    @Size(min = 2, max = 100, message = "Имя должно быть от 2 до 100 символов длиной")
+    @Size(min = 3, max = 50, message = "Имя должно быть от 3 до 50 символов длиной")
     private String username;
-
-    @Min(value = 1900, message = "Год рождения должен быть больше, чем 1900")
-    private int yearOfBirth;
 
     private String password;
     
@@ -25,14 +20,6 @@ public class AppUserDTO {
 
 	public void setUsername(String username) {
 		this.username = username;
-	}
-
-	public int getYearOfBirth() {
-		return yearOfBirth;
-	}
-
-	public void setYearOfBirth(int yearOfBirth) {
-		this.yearOfBirth = yearOfBirth;
 	}
 
 	public String getPassword() {
