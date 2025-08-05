@@ -42,7 +42,6 @@ public class AuthController {
 	public ResponseEntity<?> performRegistration(@RequestBody @Valid AppUserDTO appUserDTO, BindingResult bindingResult) {
 		AppUser appUser = appUserService.convertToAppUser(appUserDTO);
 		appUserService.register(appUser);
-		String token = jwtUtil.generateToken(appUser.getUsername());
 		return ResponseEntity.ok().build();
 	}
 	

@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 import io.github.zufarm.library.dto.AppUserDTO;
 import io.github.zufarm.library.dto.BookDTO;
 import io.github.zufarm.library.models.AppUser;
+import io.github.zufarm.library.models.Book;
 import io.github.zufarm.library.repositories.AppUserRepository;
 import io.github.zufarm.library.util.AppUserNotFoundException;
 
@@ -48,6 +49,11 @@ public class AppUserService {
 		return appUserRepository.findById(id).orElseThrow(AppUserNotFoundException::new);
 	}
 	
+	@Transactional
+	public void delete(int id) {
+		appUserRepository.deleteById(id);;
+	}
+	
 	public AppUser convertToAppUser(AppUserDTO appUserDTO) {
 		if (appUserDTO.getRole().equals("Администратор")) {
 			appUserDTO.setRole("ROLE_ADMIN");
@@ -56,6 +62,13 @@ public class AppUserService {
 			appUserDTO.setRole("ROLE_USER");
 		}
 		return this.modelMapper.map(appUserDTO, AppUser.class);
+	}
+	
+	@Transactional
+	public void update(int id, AppUser appUserToUpdate) {
+		appUserToUpdate.setId(id);
+		appUserToUpdate.setPassword(passwordEncoder.encode(appUserToUpdate.getPassword()));
+		appUserRepository.save(appUserToUpdate);
 	}
 	
 	public List<AppUserDTO> convertToAppUserDTOList(List<AppUser> appUserDTO) {
