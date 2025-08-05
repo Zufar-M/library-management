@@ -5,18 +5,14 @@ import io.github.zufarm.library.services.BookService;
 import io.github.zufarm.library.services.PersonService;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.layout.ColumnConstraints;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Priority;
+import javafx.scene.layout.*;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.StringConverter;
-import javafx.collections.transformation.FilteredList;
-import javafx.scene.layout.VBox;
 
 public class BookDetailView {
     private final BookService bookService = new BookService();
@@ -33,7 +29,7 @@ public class BookDetailView {
         detailStage.initModality(Modality.APPLICATION_MODAL);
         detailStage.setTitle("Детали книги");
         detailStage.setMinWidth(400);
-        detailStage.setMinHeight(350);
+        detailStage.setMinHeight(400);
 
         grid = new GridPane();
         grid.getStyleClass().add("admin-form");
@@ -67,21 +63,35 @@ public class BookDetailView {
         titleLabel.getStyleClass().add("admin-form-title");
         grid.add(titleLabel, 0, 0, 2, 1);
 
+        
         Label nameLabel = new Label(book.getName());
         nameLabel.getStyleClass().add("book-detail-label");
+        grid.add(new Label("Название:"), 0, 1);
+        grid.add(nameLabel, 1, 1);
+        
         
         Label authorLabel = new Label(book.getAuthor());
         authorLabel.getStyleClass().add("book-detail-label");
+        grid.add(new Label("Автор:"), 0, 2);
+        grid.add(authorLabel, 1, 2);
+        
         
         Label yearLabel = new Label(String.valueOf(book.getYear()));
         yearLabel.getStyleClass().add("book-detail-label");
-
-        grid.add(new Label("Название:"), 0, 1);
-        grid.add(nameLabel, 1, 1);
-        grid.add(new Label("Автор:"), 0, 2);
-        grid.add(authorLabel, 1, 2);
         grid.add(new Label("Год:"), 0, 3);
         grid.add(yearLabel, 1, 3);
+        
+        
+        Label genreLabel = new Label(book.getGenre() != null ? book.getGenre() : "Не указан");
+        genreLabel.getStyleClass().add("book-detail-label");
+        grid.add(new Label("Жанр:"), 0, 4);
+        grid.add(genreLabel, 1, 4);
+        
+        
+        Label languageLabel = new Label(book.getLanguage() != null ? book.getLanguage() : "Russian");
+        languageLabel.getStyleClass().add("book-detail-label");
+        grid.add(new Label("Язык:"), 0, 5);
+        grid.add(languageLabel, 1, 5);
     }
     
     private void updateAssignmentSection() {
@@ -89,13 +99,13 @@ public class BookDetailView {
 
         grid.getChildren().removeIf(node -> 
             GridPane.getRowIndex(node) != null && 
-            GridPane.getRowIndex(node) >= 4 && 
-            GridPane.getRowIndex(node) <= 6
+            GridPane.getRowIndex(node) >= 6 && 
+            GridPane.getRowIndex(node) <= 8
         );
 
         Label assignmentLabel = new Label("Выдана:");
         assignmentLabel.getStyleClass().add("admin-form-label");
-        grid.add(assignmentLabel, 0, 4);
+        grid.add(assignmentLabel, 0, 6);
         
         try {
             PersonDTO assignedPerson = personService.getBookHolder(book.getId());
@@ -103,21 +113,18 @@ public class BookDetailView {
             if (assignedPerson != null) {
                 Label personLabel = new Label(assignedPerson.getFullName() + " (" + assignedPerson.getBirthYear() + ")");
                 personLabel.getStyleClass().add("book-detail-label");
-                grid.add(personLabel, 1, 4);
+                grid.add(personLabel, 1, 6);
                 
                 Button returnBtn = new Button("Вернуть книгу");
                 returnBtn.getStyleClass().addAll("button", "book-action-button");
                 returnBtn.setOnAction(e -> returnBook());
-                grid.add(returnBtn, 1, 5);
+                grid.add(returnBtn, 1, 7);
             } else {
-                
                 VBox searchContainer = new VBox(5);
-                
                 
                 TextField searchField = new TextField();
                 searchField.setPromptText("Поиск...");
                 searchField.getStyleClass().add("admin-field");
-                
                 
                 ComboBox<PersonDTO> personCombo = new ComboBox<>();
                 personCombo.getStyleClass().add("admin-field");
@@ -133,11 +140,9 @@ public class BookDetailView {
                     }
                 });
                 
-               
                 ObservableList<PersonDTO> allPeople = FXCollections.observableArrayList(personService.getAllPeople());
                 FilteredList<PersonDTO> filteredPeople = new FilteredList<>(allPeople, p -> true);
                 
-               
                 searchField.textProperty().addListener((obs, oldValue, newValue) -> {
                     filteredPeople.setPredicate(person -> {
                         if (newValue == null || newValue.isEmpty()) {
@@ -151,10 +156,8 @@ public class BookDetailView {
                 });
                 
                 personCombo.setItems(filteredPeople);
-                
-                
                 searchContainer.getChildren().addAll(searchField, personCombo);
-                grid.add(searchContainer, 1, 4);
+                grid.add(searchContainer, 1, 6);
                 
                 Button assignBtn = new Button("Выдать");
                 assignBtn.getStyleClass().addAll("button", "book-action-button");
@@ -166,13 +169,13 @@ public class BookDetailView {
                         showAlert(Alert.AlertType.WARNING, "Предупреждение", "Выберите человека из списка");
                     }
                 });
-                grid.add(assignBtn, 1, 5);
+                grid.add(assignBtn, 1, 7);
             }
         } catch (Exception e) {
             e.printStackTrace();
             Label errorLabel = new Label("Ошибка загрузки данных");
             errorLabel.getStyleClass().add("error-label");
-            grid.add(errorLabel, 1, 4);
+            grid.add(errorLabel, 1, 6);
         }
 
         detailStage.setWidth(currentWidth);
@@ -219,7 +222,7 @@ public class BookDetailView {
         deleteBtn.setOnAction(e -> handleDelete());
 
         buttonBox.getChildren().addAll(editBtn, deleteBtn);
-        grid.add(buttonBox, 0, 7, 2, 1);
+        grid.add(buttonBox, 0, 8, 2, 1);
     }
     
     private void showEditForm() {
@@ -234,19 +237,35 @@ public class BookDetailView {
         editGrid.setVgap(10);
         editGrid.setPadding(new Insets(20));
 
+        
         TextField nameField = new TextField(book.getName());
         nameField.getStyleClass().add("admin-field");
-        TextField authorField = new TextField(book.getAuthor());
-        authorField.getStyleClass().add("admin-field");
-        TextField yearField = new TextField(String.valueOf(book.getYear()));
-        yearField.getStyleClass().add("admin-field");
-
         editGrid.add(new Label("Название:"), 0, 0);
         editGrid.add(nameField, 1, 0);
+
+        
+        TextField authorField = new TextField(book.getAuthor());
+        authorField.getStyleClass().add("admin-field");
         editGrid.add(new Label("Автор:"), 0, 1);
         editGrid.add(authorField, 1, 1);
+
+        
+        TextField yearField = new TextField(String.valueOf(book.getYear()));
+        yearField.getStyleClass().add("admin-field");
         editGrid.add(new Label("Год:"), 0, 2);
         editGrid.add(yearField, 1, 2);
+
+        
+        TextField genreField = new TextField(book.getGenre());
+        genreField.getStyleClass().add("admin-field");
+        editGrid.add(new Label("Жанр:"), 0, 3);
+        editGrid.add(genreField, 1, 3);
+
+        
+        TextField languageField = new TextField(book.getLanguage());
+        languageField.getStyleClass().add("admin-field");
+        editGrid.add(new Label("Язык:"), 0, 4);
+        editGrid.add(languageField, 1, 4);
 
         Button saveBtn = new Button("Сохранить");
         saveBtn.getStyleClass().addAll("button", "admin-register-button");
@@ -255,6 +274,8 @@ public class BookDetailView {
                 book.setName(nameField.getText());
                 book.setAuthor(authorField.getText());
                 book.setYear(Integer.parseInt(yearField.getText()));
+                book.setGenre(genreField.getText());
+                book.setLanguage(languageField.getText());
                 
                 if (bookService.updateBook(book)) {
                     onUpdate.run();
@@ -269,7 +290,7 @@ public class BookDetailView {
             }
         });
 
-        editGrid.add(saveBtn, 1, 3);
+        editGrid.add(saveBtn, 1, 5);
         Scene scene = new Scene(editGrid);
         scene.getStylesheets().add(getClass().getResource("/css/styles.css").toExternalForm());
         stage.setScene(scene);

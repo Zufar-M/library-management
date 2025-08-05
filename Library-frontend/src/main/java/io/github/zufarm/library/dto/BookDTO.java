@@ -11,19 +11,51 @@ public class BookDTO {
     private final SimpleStringProperty author;
     private final SimpleIntegerProperty year;
     private final int id; 
+    private String genre;
+	private String language;
     @JsonCreator
     public BookDTO(
     		@JsonProperty("id") int id,
             @JsonProperty("name") String name,
             @JsonProperty("author") String author,
-            @JsonProperty("year") int year) {
+            @JsonProperty("year") int year,
+    		@JsonProperty("genre") String genre,
+    		@JsonProperty("language") String language){
         this.name = new SimpleStringProperty(name);
         this.author = new SimpleStringProperty(author);
         this.year = new SimpleIntegerProperty(year);
         this.id = id;
+        this.genre = genre;
+        this.language = language;
     }
     
-    public int getId() {
+    
+    
+    public String getGenre() {
+		return genre;
+	}
+
+
+
+	public void setGenre(String genre) {
+		this.genre = genre;
+	}
+
+
+
+	public String getLanguage() {
+		return language;
+	}
+
+
+
+	public void setLanguage(String language) {
+		this.language = language;
+	}
+
+
+
+	public int getId() {
 		return id;
 	}
     

@@ -15,6 +15,7 @@ public class BookAddView {
         Stage stage = new Stage();
         stage.initModality(Modality.APPLICATION_MODAL);
         stage.setTitle("Добавить книгу");
+        stage.setMinWidth(400);
 
         GridPane grid = new GridPane();
         grid.getStyleClass().add("admin-form");
@@ -26,6 +27,7 @@ public class BookAddView {
         titleLabel.getStyleClass().add("admin-form-title");
         grid.add(titleLabel, 0, 0, 2, 1);
 
+        
         Label nameLabel = new Label("Название:");
         nameLabel.getStyleClass().add("admin-form-label");
         TextField nameField = new TextField();
@@ -33,6 +35,7 @@ public class BookAddView {
         grid.add(nameLabel, 0, 1);
         grid.add(nameField, 1, 1);
 
+        
         Label authorLabel = new Label("Автор:");
         authorLabel.getStyleClass().add("admin-form-label");
         TextField authorField = new TextField();
@@ -40,6 +43,7 @@ public class BookAddView {
         grid.add(authorLabel, 0, 2);
         grid.add(authorField, 1, 2);
 
+        
         Label yearLabel = new Label("Год:");
         yearLabel.getStyleClass().add("admin-form-label");
         TextField yearField = new TextField();
@@ -47,11 +51,34 @@ public class BookAddView {
         grid.add(yearLabel, 0, 3);
         grid.add(yearField, 1, 3);
 
+        
+        Label genreLabel = new Label("Жанр:");
+        genreLabel.getStyleClass().add("admin-form-label");
+        TextField genreField = new TextField();
+        genreField.getStyleClass().add("admin-field");
+        grid.add(genreLabel, 0, 4);
+        grid.add(genreField, 1, 4);
+
+        
+        Label languageLabel = new Label("Язык:");
+        languageLabel.getStyleClass().add("admin-form-label");
+        TextField languageField = new TextField("Russian");
+        languageField.getStyleClass().add("admin-field");
+        grid.add(languageLabel, 0, 5);
+        grid.add(languageField, 1, 5);
+
         Button submitBtn = new Button("Сохранить");
         submitBtn.getStyleClass().addAll("admin-button", "admin-register-button");
         submitBtn.setOnAction(e -> {
             try {
-                BookDTO book = new BookDTO(0, nameField.getText(), authorField.getText(), Integer.parseInt(yearField.getText()));
+                BookDTO book = new BookDTO(
+                    0, 
+                    nameField.getText(), 
+                    authorField.getText(), 
+                    Integer.parseInt(yearField.getText()),
+                    genreField.getText(),
+                    languageField.getText()
+                );
                 bookService.addBook(book);
                 onSuccess.run();
                 stage.close();
@@ -62,7 +89,7 @@ public class BookAddView {
             }
         });
 
-        grid.add(submitBtn, 1, 4);
+        grid.add(submitBtn, 1, 6);
 
         Scene scene = new Scene(grid);
         scene.getStylesheets().add(getClass().getResource("/css/styles.css").toExternalForm());

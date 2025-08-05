@@ -12,5 +12,22 @@ CREATE TABLE app_user (
 
 CREATE INDEX idx_app_user_username ON app_user(username);
 
+CREATE TABLE book (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    author VARCHAR(255) NOT NULL,
+    year INTEGER NOT NULL CHECK (year > 0 AND year <= EXTRACT(YEAR FROM CURRENT_DATE)),
+    genre VARCHAR(100),
+    language VARCHAR(50) DEFAULT 'Russian',
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    person_id INTEGER REFERENCES person(id) ON DELETE SET NULL
+);
+
+CREATE INDEX idx_book_name ON book(name);
+CREATE INDEX idx_book_person_id ON book(person_id);
+
+
+
 
 

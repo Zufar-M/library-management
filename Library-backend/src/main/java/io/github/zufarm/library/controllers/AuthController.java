@@ -56,8 +56,9 @@ public class AuthController {
 		catch (BadCredentialsException e) {
 			return Map.of("message", "Incorrect credentials!");
 		}
-		String token = jwtUtil.generateToken(authenticationDTO.getUsername());
-		String userRole = appUserService.findByUserName(authenticationDTO.getUsername()).get().getRole();
+		AppUser appUser = appUserService.findByUserName(authenticationDTO.getUsername()).get();
+		String token = jwtUtil.generateToken(appUser.getUsername());
+		String userRole = appUser.getRole();
 		return Map.of("token", token, "role", userRole);
 	}
 	

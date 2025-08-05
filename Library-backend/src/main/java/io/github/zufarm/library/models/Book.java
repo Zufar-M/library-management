@@ -36,6 +36,12 @@ public class Book {
     @Max(value = 2100, message = "Год издания должен быть не больше 2100")
 	private int year;
 	
+	@Column(name = "genre")
+	private String genre;
+	
+	@Column(name = "language")
+	private String language;
+	
 	@ManyToOne
 	@JoinColumn(name = "person_id", referencedColumnName = "id", nullable = true)
 	private Person bookHolder;
@@ -79,4 +85,17 @@ public class Book {
 	public Book() {
 		
 	}
+	public String getGenre() {
+		return genre;
+	}
+	public void setGenre(String genre) {
+		this.genre = genre;
+	}
+	public String getLanguage() {
+		return language;
+	}
+	public void setLanguage(String language) {
+		this.language = language;
+	}
+	
 }

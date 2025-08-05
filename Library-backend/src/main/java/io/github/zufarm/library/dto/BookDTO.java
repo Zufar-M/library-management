@@ -22,6 +22,10 @@ public class BookDTO {
 	private int year;
 
 	
+	private String genre;
+	
+	private String language;
+	
 	public int getId() {
 		return id;
 	}
@@ -53,6 +57,24 @@ public class BookDTO {
 	public void setYear(int year) {
 		this.year = year;
 	}
+
+	public String getGenre() {
+		return genre;
+	}
+
+	public void setGenre(String genre) {
+		this.genre = genre;
+	}
+
+	public String getLanguage() {
+		return language;
+	}
+
+	public void setLanguage(String language) {
+		this.language = language;
+	}
+	
+	
 	
 	
 }
