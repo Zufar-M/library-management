@@ -53,7 +53,7 @@ logs/
 /db/
 /database/
 *.sql
-!/src/main/resources/schema.sql
+!/src/main/resources/table_config.sql
 
 ### Spring Boot ###
 /src/main/resources/application.properties  
