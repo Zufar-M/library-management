@@ -6,10 +6,11 @@ import javafx.stage.Stage;
 
 public class SceneManager {
     private static Stage primaryStage;
-    private static String currentToken;
     
     public static void init(Stage stage) {
         primaryStage = stage;
+        primaryStage.setMinWidth(900);
+        primaryStage.setMinHeight(600);
     }
     
     public static void switchScene(Parent root) {
@@ -18,23 +19,4 @@ public class SceneManager {
         primaryStage.setScene(scene);
         primaryStage.centerOnScreen();
     }
-    
-    public static void setCurrentToken(String token) {
-        currentToken = token;
-    }
-    
-    public static String getCurrentToken() {
-        return currentToken;
-    }
-    public static void navigateTo(String viewName) {
-        switch (viewName) {
-            case "books":
-                break;
-            case "addBook":
-                break;
-            default:
-                break;
-        }
-    }
-    
 }

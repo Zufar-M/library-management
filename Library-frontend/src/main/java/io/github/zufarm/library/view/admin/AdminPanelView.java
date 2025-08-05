@@ -18,11 +18,11 @@ public class AdminPanelView {
 
     public Parent getView() {
         BorderPane root = new BorderPane();
-        root.setMinWidth(800);
+        root.getStyleClass().add("admin-root");
         
         SplitPane splitPane = new SplitPane(createRegistrationForm(), createUserTable());
+        splitPane.getStyleClass().add("admin-split-pane");
         splitPane.setDividerPositions(0.4);
-        splitPane.setPrefWidth(800);
         
         root.setCenter(splitPane);
         return root;
@@ -30,35 +30,28 @@ public class AdminPanelView {
 
     private GridPane createRegistrationForm() {
         GridPane form = new GridPane();
+        form.getStyleClass().addAll("admin-form", "form-grid");
         form.setPadding(new Insets(20));
         form.setHgap(15);
         form.setVgap(10);
-        form.setStyle("-fx-background-color: #f5f5f5;");
         form.setMinWidth(350);
-        form.setPrefWidth(350);
 
         Label titleLabel = new Label("Регистрация нового пользователя");
-        titleLabel.setStyle("-fx-font-size: 16; -fx-font-weight: bold;");
+        titleLabel.getStyleClass().add("admin-form-title");
         
         TextField usernameField = new TextField();
-        usernameField.setMinWidth(200);
-        usernameField.setPrefWidth(200);
+        usernameField.getStyleClass().add("admin-field");
         
         PasswordField passwordField = new PasswordField();
-        passwordField.setMinWidth(200);
-        passwordField.setPrefWidth(200);
+        passwordField.getStyleClass().add("admin-field");
         
         ComboBox<String> roleComboBox = new ComboBox<>();
         roleComboBox.getItems().addAll("Сотрудник", "Администратор");
         roleComboBox.setValue("Сотрудник");
-        roleComboBox.setMinWidth(200);
-        roleComboBox.setPrefWidth(200);
+        roleComboBox.getStyleClass().add("admin-combo-box");
         
         Button registerButton = new Button("Зарегистрировать");
-        registerButton.setStyle("-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 14;");
-        registerButton.setMinWidth(200);
-        registerButton.setPrefWidth(200);
-        registerButton.setMinHeight(30);
+        registerButton.getStyleClass().addAll("admin-button", "admin-register-button");
         registerButton.setOnAction(e -> registerUser(
             usernameField.getText(),
             passwordField.getText(),
@@ -76,9 +69,7 @@ public class AdminPanelView {
 
     private void addFormRow(GridPane form, String labelText, Control field, int row) {
         Label label = new Label(labelText);
-        label.setAlignment(Pos.CENTER_RIGHT);
-        label.setPrefWidth(120);
-        label.setStyle("-fx-font-size: 14;");
+        label.getStyleClass().add("admin-form-label");
         form.add(label, 0, row);
         form.add(field, 1, row);
     }
@@ -86,22 +77,20 @@ public class AdminPanelView {
     private VBox createUserTable() {
         TableColumn<UserDTO, String> usernameCol = new TableColumn<>("Имя пользователя");
         usernameCol.setCellValueFactory(new PropertyValueFactory<>("username"));
-        usernameCol.setPrefWidth(200);
-        usernameCol.setStyle("-fx-font-size: 14;");
+        usernameCol.getStyleClass().add("admin-table-column");
         
         TableColumn<UserDTO, String> roleCol = new TableColumn<>("Роль");
         roleCol.setCellValueFactory(new PropertyValueFactory<>("role"));
-        roleCol.setPrefWidth(150);
-        roleCol.setStyle("-fx-font-size: 14;");
+        roleCol.getStyleClass().add("admin-table-column");
         
         userTable.getColumns().addAll(usernameCol, roleCol);
         userTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
         userTable.setItems(userData);
-        userTable.setPrefWidth(450);
-        userTable.setStyle("-fx-font-size: 14;");
+        userTable.getStyleClass().add("admin-table");
 
         userTable.setRowFactory(tv -> {
             TableRow<UserDTO> row = new TableRow<>();
+            row.getStyleClass().add("admin-table-row");
             row.setOnMouseClicked(event -> {
                 if (event.getClickCount() == 2 && !row.isEmpty()) {
                     UserDTO selectedUser = row.getItem();
@@ -112,14 +101,16 @@ public class AdminPanelView {
         });
 
         Button refreshButton = new Button("Обновить список пользователей");
-        refreshButton.setStyle("-fx-background-color: #2196F3; -fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 14;");
-        refreshButton.setMinWidth(180);
-        refreshButton.setMinHeight(30);
+        refreshButton.getStyleClass().addAll("admin-button", "admin-refresh-button");
         refreshButton.setOnAction(e -> loadUsers());
         
-        VBox container = new VBox(10, new Label("Список зарегистрированных пользователей"), userTable, refreshButton);
+        VBox container = new VBox(10, 
+            new Label("Список зарегистрированных пользователей"), 
+            userTable, 
+            refreshButton
+        );
+        container.getStyleClass().add("admin-table-container");
         container.setPadding(new Insets(20));
-        container.setPrefWidth(450);
         
         loadUsers();
         
@@ -128,6 +119,7 @@ public class AdminPanelView {
 
     private void showEditDialog(UserDTO user) {
         Dialog<UserDTO> dialog = new Dialog<>();
+        dialog.getDialogPane().getStyleClass().addAll("admin-dialog", "dialog-pane");
         dialog.setTitle("Редактирование пользователя");
         dialog.setHeaderText("Измените данные пользователя");
 
@@ -136,16 +128,22 @@ public class AdminPanelView {
         dialog.getDialogPane().getButtonTypes().addAll(saveButtonType, deleteButtonType, ButtonType.CANCEL);
 
         GridPane grid = new GridPane();
+        grid.getStyleClass().addAll("admin-dialog-grid", "dialog-grid");
         grid.setHgap(10);
         grid.setVgap(10);
         grid.setPadding(new Insets(20, 150, 10, 10));
 
         TextField usernameField = new TextField(user.getUsername());
+        usernameField.getStyleClass().add("admin-dialog-field");
+        
         PasswordField passwordField = new PasswordField();
+        passwordField.getStyleClass().add("admin-dialog-field");
         passwordField.setPromptText("Новый пароль (оставьте пустым, чтобы не менять)");
+        
         ComboBox<String> roleComboBox = new ComboBox<>();
         roleComboBox.getItems().addAll("Сотрудник", "Администратор");
         roleComboBox.setValue(user.getRole());
+        roleComboBox.getStyleClass().add("admin-dialog-combo");
 
         grid.add(new Label("Имя пользователя:"), 0, 0);
         grid.add(usernameField, 1, 0);
@@ -154,7 +152,24 @@ public class AdminPanelView {
         grid.add(new Label("Роль:"), 0, 2);
         grid.add(roleComboBox, 1, 2);
 
+        // Применяем стили к меткам
+        for (int i = 0; i < grid.getChildren().size(); i++) {
+            if (grid.getChildren().get(i) instanceof Label) {
+                ((Label) grid.getChildren().get(i)).getStyleClass().add("admin-dialog-label");
+            }
+        }
+
         dialog.getDialogPane().setContent(grid);
+
+        // Применяем стили к кнопкам
+        Button saveButton = (Button) dialog.getDialogPane().lookupButton(saveButtonType);
+        saveButton.getStyleClass().addAll("dialog-button", "button-type-save");
+        
+        Button deleteButton = (Button) dialog.getDialogPane().lookupButton(deleteButtonType);
+        deleteButton.getStyleClass().addAll("dialog-button", "button-type-delete");
+        
+        Button cancelButton = (Button) dialog.getDialogPane().lookupButton(ButtonType.CANCEL);
+        cancelButton.getStyleClass().addAll("dialog-button", "button-type-cancel");
 
         dialog.setResultConverter(dialogButton -> {
             if (dialogButton == saveButtonType) {
@@ -187,9 +202,22 @@ public class AdminPanelView {
 
     private void deleteUser(UserDTO user) {
         Alert confirmation = new Alert(Alert.AlertType.CONFIRMATION);
+        confirmation.getDialogPane().getStyleClass().addAll("admin-dialog", "confirmation-dialog");
         confirmation.setTitle("Подтверждение удаления");
         confirmation.setHeaderText("Вы уверены, что хотите удалить пользователя?");
         confirmation.setContentText("Пользователь: " + user.getUsername());
+
+        // Применяем стили к кнопкам
+        ButtonType okButton = ButtonType.OK;
+        ButtonType cancelButton = ButtonType.CANCEL;
+        
+        confirmation.getButtonTypes().setAll(okButton, cancelButton);
+        
+        Button okBtn = (Button) confirmation.getDialogPane().lookupButton(okButton);
+        okBtn.getStyleClass().addAll("dialog-button", "button-type-delete");
+        
+        Button cancelBtn = (Button) confirmation.getDialogPane().lookupButton(cancelButton);
+        cancelBtn.getStyleClass().addAll("dialog-button", "button-type-cancel");
 
         confirmation.showAndWait().ifPresent(response -> {
             if (response == ButtonType.OK) {
@@ -206,12 +234,11 @@ public class AdminPanelView {
 
     private void registerUser(String username, String password, String role) {
         try {
-            
             UserDTO newUser = new UserDTO(0, username, role, password);
             userService.registerUser(newUser);
             loadUsers();
             showAlert("Успех", "Пользователь успешно зарегистрирован", Alert.AlertType.INFORMATION);
-        }  catch (Exception e) {
+        } catch (Exception e) {
             showAlert("Ошибка", e.getMessage(), Alert.AlertType.ERROR);
         }
     }
@@ -223,14 +250,15 @@ public class AdminPanelView {
 
     private void showAlert(String title, String message, Alert.AlertType type) {
         Alert alert = new Alert(type);
+        alert.getDialogPane().getStyleClass().addAll("admin-dialog", "dialog-pane");
         alert.setTitle(title);
         alert.setHeaderText(null);
         alert.setContentText(message);
         
-        DialogPane dialogPane = alert.getDialogPane();
-        dialogPane.setMinWidth(350);
-        dialogPane.setMinHeight(150);
-        dialogPane.setStyle("-fx-font-size: 14;");
+        // Стилизация кнопки OK в алерте
+        ButtonType okButton = ButtonType.OK;
+        Button okBtn = (Button) alert.getDialogPane().lookupButton(okButton);
+        okBtn.getStyleClass().addAll("dialog-button", "button-type-save");
         
         alert.showAndWait();
     }

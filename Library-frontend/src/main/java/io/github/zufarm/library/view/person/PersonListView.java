@@ -28,10 +28,14 @@ public class PersonListView {
     }
     
     private void initializeTable() {
+        table.getStyleClass().add("person-table");
+        
         TableColumn<PersonDTO, String> fullNameCol = new TableColumn<>("Имя");
+        fullNameCol.getStyleClass().add("table-column");
         fullNameCol.setCellValueFactory(new PropertyValueFactory<>("fullName"));
         
         TableColumn<PersonDTO, Integer> birthYearCol = new TableColumn<>("Год рождения");
+        birthYearCol.getStyleClass().add("table-column");
         birthYearCol.setCellValueFactory(new PropertyValueFactory<>("birthYear"));
         
         table.getColumns().addAll(fullNameCol, birthYearCol);
@@ -62,31 +66,24 @@ public class PersonListView {
     
     public Parent getView() {
         VBox layout = new VBox(10);
-        layout.setStyle("-fx-padding: 20;");
+        layout.getStyleClass().add("person-list-container");
         
         searchField = new TextField();
+        searchField.getStyleClass().add("search-field");
         searchField.setPromptText("Поиск по имени...");
-        searchField.setPrefWidth(200);
-        searchField.setMaxWidth(200);
-        searchField.textProperty().addListener((observable, oldValue, newValue) -> {
-            filteredPeople.setPredicate(person -> {
-                if (newValue == null || newValue.isEmpty()) {
-                    return true;
-                }
-                String lowerCaseFilter = newValue.toLowerCase();
-                return person.getFullName().toLowerCase().contains(lowerCaseFilter);
-            });
-        });
         
         Button refreshBtn = new Button("Обновить");
+        refreshBtn.getStyleClass().add("refresh-button");
         refreshBtn.setOnAction(e -> loadPeople());
         
         Button addPersonBtn = new Button("Добавить нового читателя");
+        addPersonBtn.getStyleClass().add("add-button");
         addPersonBtn.setOnAction(e -> {
             new PersonAddView().showForm(this::loadPeople);
         });
         
         HBox buttonPanel = new HBox(10);
+        buttonPanel.getStyleClass().add("button-panel");
         buttonPanel.getChildren().addAll(refreshBtn, addPersonBtn);
         
         layout.getChildren().addAll(searchField, table, buttonPanel);

@@ -1,27 +1,63 @@
 package io.github.zufarm.library.view.auth;
 
 import io.github.zufarm.library.controllers.AuthController;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Parent;
-import javafx.fxml.FXMLLoader;
-import java.io.IOException;
-import java.net.URL;
+import javafx.scene.control.*;
+import javafx.scene.layout.VBox;
+import javafx.scene.text.Text;
 
 public class LoginView {
-    private Parent view;
-    
-    public LoginView() throws IOException {
-        FXMLLoader loader = new FXMLLoader();
-        
-        URL fxmlUrl = getClass().getResource("/fxml/auth/login.fxml");
-        if (fxmlUrl == null) {
-            throw new IOException("Cannot find FXML file: /fxml/auth/login.fxml");
-        }
-        
-        loader.setLocation(fxmlUrl);
-        loader.setController(new AuthController());
-        view = loader.load();
+    private final VBox view;
+    private final AuthController controller;
+
+    public LoginView() {
+        this.controller = new AuthController();
+        this.view = createView();
     }
-    
+
+    private VBox createView() {
+        // Создание элементов UI
+        Text title = new Text("Вход в систему");
+        title.getStyleClass().add("login-title");
+
+        TextField usernameField = new TextField();
+        usernameField.setPromptText("Введите логин");
+        usernameField.getStyleClass().add("login-field");
+
+        PasswordField passwordField = new PasswordField();
+        passwordField.setPromptText("Введите пароль");
+        passwordField.getStyleClass().add("login-field");
+
+        Label errorLabel = new Label();
+        errorLabel.getStyleClass().add("login-error");
+
+        Button loginButton = new Button("Войти");
+        loginButton.getStyleClass().add("login-button");
+        loginButton.setDefaultButton(true);
+
+        // Настройка контроллера
+        controller.setup(usernameField, passwordField, errorLabel, loginButton);
+
+        // Компоновка
+        VBox layout = new VBox(10, 
+            title,
+            new Label("Логин:"),
+            usernameField,
+            new Label("Пароль:"),
+            passwordField,
+            errorLabel,
+            loginButton
+        );
+        
+        layout.getStyleClass().add("login-container");
+        layout.setAlignment(Pos.CENTER);
+        layout.setPadding(new Insets(20));
+
+        return layout;
+    }
+
     public Parent getView() {
         return view;
     }

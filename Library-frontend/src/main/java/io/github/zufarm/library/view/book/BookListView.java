@@ -30,17 +30,23 @@ public class BookListView {
     private void initializeTable() {
         TableColumn<BookDTO, String> titleCol = new TableColumn<>("Название");
         titleCol.setCellValueFactory(new PropertyValueFactory<>("name"));
+        titleCol.getStyleClass().add("table-column");
         
         TableColumn<BookDTO, String> authorCol = new TableColumn<>("Автор");
         authorCol.setCellValueFactory(new PropertyValueFactory<>("author"));
+        authorCol.getStyleClass().add("table-column");
         
         TableColumn<BookDTO, Integer> yearCol = new TableColumn<>("Год");
         yearCol.setCellValueFactory(new PropertyValueFactory<>("year"));
+        yearCol.getStyleClass().add("table-column");
         
         table.getColumns().addAll(titleCol, authorCol, yearCol);
         table.setItems(filteredBooks);
+        table.getStyleClass().add("book-table");
+        
         table.setRowFactory(tv -> {
             TableRow<BookDTO> row = new TableRow<>();
+            row.getStyleClass().add("table-row");
             row.setOnMouseClicked(event -> {
                 if (event.getClickCount() == 2 && !row.isEmpty()) {
                     BookDTO rowData = row.getItem();
@@ -64,32 +70,25 @@ public class BookListView {
     }
     
     public Parent getView() {
-        VBox layout = new VBox(10);
-        layout.setStyle("-fx-padding: 20;");
+        VBox layout = new VBox();
+        layout.getStyleClass().add("book-list-container");
         
         searchField = new TextField();
         searchField.setPromptText("Поиск по названию...");
-        searchField.setPrefWidth(200);
-        searchField.setMaxWidth(200);
-        searchField.textProperty().addListener((observable, oldValue, newValue) -> {
-            filteredBooks.setPredicate(book -> {
-                if (newValue == null || newValue.isEmpty()) {
-                    return true;
-                }
-                String lowerCaseFilter = newValue.toLowerCase();
-                return book.getName().toLowerCase().contains(lowerCaseFilter);
-            });
-        });
+        searchField.getStyleClass().add("book-search-field");
         
         Button refreshBtn = new Button("Обновить");
+        refreshBtn.getStyleClass().add("book-action-button");
         refreshBtn.setOnAction(e -> loadBooks());
         
         Button addBookBtn = new Button("Добавить книгу");
+        addBookBtn.getStyleClass().addAll("book-action-button", "book-add-button");
         addBookBtn.setOnAction(e -> {
             new BookAddView().showForm(this::loadBooks);
         });
         
-        HBox buttonPanel = new HBox(10);
+        HBox buttonPanel = new HBox();
+        buttonPanel.getStyleClass().add("book-button-panel");
         buttonPanel.getChildren().addAll(refreshBtn, addBookBtn);
         
         layout.getChildren().addAll(searchField, table, buttonPanel);

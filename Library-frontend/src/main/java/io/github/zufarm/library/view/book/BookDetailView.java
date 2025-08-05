@@ -35,6 +35,7 @@ public class BookDetailView {
         detailStage.setMinHeight(350);
 
         grid = new GridPane();
+        grid.getStyleClass().add("admin-form");
         grid.setHgap(10);
         grid.setVgap(10);
         grid.setPadding(new Insets(20));
@@ -55,56 +56,61 @@ public class BookDetailView {
         addControlButtons();
 
         Scene scene = new Scene(grid);
+        scene.getStylesheets().add(getClass().getResource("/css/styles.css").toExternalForm());
         detailStage.setScene(scene);
         detailStage.show();
     }
     
     private void addBookInfo() {
+        Label titleLabel = new Label("Информация о книге");
+        titleLabel.getStyleClass().add("admin-form-title");
+        grid.add(titleLabel, 0, 0, 2, 1);
+
         Label nameLabel = new Label(book.getName());
-        nameLabel.setMaxWidth(Double.MAX_VALUE);
+        nameLabel.getStyleClass().add("book-detail-label");
         
         Label authorLabel = new Label(book.getAuthor());
-        authorLabel.setMaxWidth(Double.MAX_VALUE);
+        authorLabel.getStyleClass().add("book-detail-label");
         
         Label yearLabel = new Label(String.valueOf(book.getYear()));
-        yearLabel.setMaxWidth(Double.MAX_VALUE);
+        yearLabel.getStyleClass().add("book-detail-label");
 
-        grid.add(new Label("Название:"), 0, 0);
-        grid.add(nameLabel, 1, 0);
-        grid.add(new Label("Автор:"), 0, 1);
-        grid.add(authorLabel, 1, 1);
-        grid.add(new Label("Год:"), 0, 2);
-        grid.add(yearLabel, 1, 2);
+        grid.add(new Label("Название:"), 0, 1);
+        grid.add(nameLabel, 1, 1);
+        grid.add(new Label("Автор:"), 0, 2);
+        grid.add(authorLabel, 1, 2);
+        grid.add(new Label("Год:"), 0, 3);
+        grid.add(yearLabel, 1, 3);
     }
     
     private void updateAssignmentSection() {
-
         double currentWidth = detailStage.getWidth();
-        
 
         grid.getChildren().removeIf(node -> 
             GridPane.getRowIndex(node) != null && 
-            GridPane.getRowIndex(node) >= 3 && 
-            GridPane.getRowIndex(node) <= 5
+            GridPane.getRowIndex(node) >= 4 && 
+            GridPane.getRowIndex(node) <= 6
         );
 
-        grid.add(new Label("Выдана:"), 0, 3);
+        Label assignmentLabel = new Label("Выдана:");
+        assignmentLabel.getStyleClass().add("admin-form-label");
+        grid.add(assignmentLabel, 0, 4);
         
         try {
             PersonDTO assignedPerson = personService.getBookHolder(book.getId());
             
             if (assignedPerson != null) {
                 Label personLabel = new Label(assignedPerson.getFullName() + " (" + assignedPerson.getBirthYear() + ")");
-                personLabel.setMaxWidth(Double.MAX_VALUE);
-                grid.add(personLabel, 1, 3);
+                personLabel.getStyleClass().add("book-detail-label");
+                grid.add(personLabel, 1, 4);
                 
                 Button returnBtn = new Button("Вернуть книгу");
-                returnBtn.setMaxWidth(Double.MAX_VALUE);
+                returnBtn.getStyleClass().addAll("button", "book-action-button");
                 returnBtn.setOnAction(e -> returnBook());
-                grid.add(returnBtn, 1, 4);
+                grid.add(returnBtn, 1, 5);
             } else {
                 ComboBox<PersonDTO> personCombo = new ComboBox<>();
-                personCombo.setMaxWidth(Double.MAX_VALUE);
+                personCombo.getStyleClass().add("admin-field");
                 personCombo.setConverter(new StringConverter<PersonDTO>() {
                     @Override
                     public String toString(PersonDTO person) {
@@ -119,10 +125,10 @@ public class BookDetailView {
                 
                 ObservableList<PersonDTO> people = FXCollections.observableArrayList(personService.getAllPeople());
                 personCombo.setItems(people);
-                grid.add(personCombo, 1, 3);
+                grid.add(personCombo, 1, 4);
                 
                 Button assignBtn = new Button("Выдать");
-                assignBtn.setMaxWidth(Double.MAX_VALUE);
+                assignBtn.getStyleClass().addAll("button", "book-action-button");
                 assignBtn.setOnAction(e -> {
                     PersonDTO selected = personCombo.getSelectionModel().getSelectedItem();
                     if (selected != null) {
@@ -131,16 +137,14 @@ public class BookDetailView {
                         showAlert(Alert.AlertType.WARNING, "Предупреждение", "Выберите человека из списка");
                     }
                 });
-                grid.add(assignBtn, 1, 4);
+                grid.add(assignBtn, 1, 5);
             }
         } catch (Exception e) {
             e.printStackTrace();
             Label errorLabel = new Label("Ошибка загрузки данных");
-            errorLabel.setStyle("-fx-text-fill: red;");
-            errorLabel.setMaxWidth(Double.MAX_VALUE);
-            grid.add(errorLabel, 1, 3);
+            errorLabel.getStyleClass().add("error-label");
+            grid.add(errorLabel, 1, 4);
         }
-        
 
         detailStage.setWidth(currentWidth);
     }
@@ -175,17 +179,18 @@ public class BookDetailView {
     
     private void addControlButtons() {
         HBox buttonBox = new HBox(10);
-        buttonBox.setStyle("-fx-padding: 10 0 0 0;");
+        buttonBox.getStyleClass().add("button-box");
         
         Button editBtn = new Button("Редактировать");
+        editBtn.getStyleClass().addAll("button", "book-action-button");
         editBtn.setOnAction(e -> showEditForm());
         
         Button deleteBtn = new Button("Удалить");
-        deleteBtn.setStyle("-fx-background-color: #ff4444; -fx-text-fill: white;");
+        deleteBtn.getStyleClass().addAll("button", "delete-button");
         deleteBtn.setOnAction(e -> handleDelete());
 
         buttonBox.getChildren().addAll(editBtn, deleteBtn);
-        grid.add(buttonBox, 0, 6, 2, 1);
+        grid.add(buttonBox, 0, 7, 2, 1);
     }
     
     private void showEditForm() {
@@ -195,13 +200,17 @@ public class BookDetailView {
         stage.setMinWidth(300);
 
         GridPane editGrid = new GridPane();
+        editGrid.getStyleClass().add("admin-form");
         editGrid.setHgap(10);
         editGrid.setVgap(10);
         editGrid.setPadding(new Insets(20));
 
         TextField nameField = new TextField(book.getName());
+        nameField.getStyleClass().add("admin-field");
         TextField authorField = new TextField(book.getAuthor());
+        authorField.getStyleClass().add("admin-field");
         TextField yearField = new TextField(String.valueOf(book.getYear()));
+        yearField.getStyleClass().add("admin-field");
 
         editGrid.add(new Label("Название:"), 0, 0);
         editGrid.add(nameField, 1, 0);
@@ -211,6 +220,7 @@ public class BookDetailView {
         editGrid.add(yearField, 1, 2);
 
         Button saveBtn = new Button("Сохранить");
+        saveBtn.getStyleClass().addAll("button", "admin-register-button");
         saveBtn.setOnAction(e -> {
             try {
                 book.setName(nameField.getText());
@@ -231,7 +241,9 @@ public class BookDetailView {
         });
 
         editGrid.add(saveBtn, 1, 3);
-        stage.setScene(new Scene(editGrid));
+        Scene scene = new Scene(editGrid);
+        scene.getStylesheets().add(getClass().getResource("/css/styles.css").toExternalForm());
+        stage.setScene(scene);
         stage.show();
     }
     
@@ -240,6 +252,7 @@ public class BookDetailView {
         confirmation.setTitle("Подтверждение удаления");
         confirmation.setHeaderText("Вы уверены, что хотите удалить эту книгу?");
         confirmation.setContentText(book.getName() + " - " + book.getAuthor());
+        confirmation.getDialogPane().getStylesheets().add(getClass().getResource("/css/styles.css").toExternalForm());
 
         confirmation.showAndWait().ifPresent(response -> {
             if (response == ButtonType.OK) {
@@ -263,6 +276,7 @@ public class BookDetailView {
         alert.setTitle(title);
         alert.setHeaderText(null);
         alert.setContentText(message);
+        alert.getDialogPane().getStylesheets().add(getClass().getResource("/css/styles.css").toExternalForm());
         alert.showAndWait();
     }
 }

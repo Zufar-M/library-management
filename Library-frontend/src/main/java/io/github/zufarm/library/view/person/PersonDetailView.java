@@ -30,11 +30,11 @@ public class PersonDetailView {
         detailStage.setMinHeight(400);
 
         GridPane grid = new GridPane();
+        grid.getStyleClass().add("detail-grid");
         grid.setHgap(15);
         grid.setVgap(15);
         grid.setPadding(new Insets(20));
 
-        
         ColumnConstraints col1 = new ColumnConstraints();
         col1.setHgrow(Priority.NEVER);
         col1.setPrefWidth(120);
@@ -45,27 +45,24 @@ public class PersonDetailView {
         
         grid.getColumnConstraints().addAll(col1, col2);
 
-        
         Label nameLabel = new Label(person.getFullName());
-        nameLabel.setStyle("-fx-font-size: 14px;");
+        nameLabel.getStyleClass().add("detail-value");
         Label yearLabel = new Label(String.valueOf(person.getBirthYear()));
-        yearLabel.setStyle("-fx-font-size: 14px;");
+        yearLabel.getStyleClass().add("detail-value");
 
         grid.add(new Label("ФИО:"), 0, 0);
         grid.add(nameLabel, 1, 0);
         grid.add(new Label("Год рождения:"), 0, 1);
         grid.add(yearLabel, 1, 1);
 
-        
         Label booksLabel = new Label("Книги на руках:");
-        booksLabel.setStyle("-fx-font-weight: bold; -fx-font-size: 14px;");
+        booksLabel.getStyleClass().add("section-title");
         grid.add(booksLabel, 0, 2, 2, 1);
 
-        
         booksTable = new TableView<>();
+        booksTable.getStyleClass().add("detail-table");
         booksTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
         booksTable.setPlaceholder(new Label("Нет книг на руках"));
-        
         
         TableColumn<BookDTO, String> nameColumn = new TableColumn<>("Название");
         nameColumn.setCellValueFactory(cellData -> cellData.getValue().nameProperty());
@@ -78,7 +75,6 @@ public class PersonDetailView {
         
         booksTable.getColumns().addAll(nameColumn, authorColumn, yearColumn);
         
-        
         booksTable.setRowFactory(tv -> {
             TableRow<BookDTO> row = new TableRow<>();
             row.setOnMouseClicked(event -> {
@@ -90,34 +86,33 @@ public class PersonDetailView {
             return row;
         });
 
-        
         refreshBooksTable();
 
-        
         ScrollPane scrollPane = new ScrollPane(booksTable);
         scrollPane.setFitToWidth(true);
         scrollPane.setFitToHeight(true);
+        scrollPane.getStyleClass().add("detail-scroll");
         
         grid.add(scrollPane, 0, 3, 2, 1);
         GridPane.setHgrow(scrollPane, Priority.ALWAYS);
         GridPane.setVgrow(scrollPane, Priority.ALWAYS);
 
-        
         HBox buttonBox = new HBox(15);
-        buttonBox.setStyle("-fx-padding: 15 0 0 0;");
+        buttonBox.getStyleClass().add("button-box");
         
         Button editBtn = new Button("Редактировать");
-        editBtn.setStyle("-fx-font-size: 14px;");
+        editBtn.getStyleClass().add("edit-button");
         editBtn.setOnAction(e -> showEditForm(detailStage, onUpdate));
         
         Button deleteBtn = new Button("Удалить");
-        deleteBtn.setStyle("-fx-background-color: #ff4444; -fx-text-fill: white; -fx-font-size: 14px;");
+        deleteBtn.getStyleClass().add("delete-button");
         deleteBtn.setOnAction(e -> handleDelete(onUpdate));
 
         buttonBox.getChildren().addAll(editBtn, deleteBtn);
         grid.add(buttonBox, 1, 4);
 
         Scene scene = new Scene(grid);
+        scene.getStylesheets().add(getClass().getResource("/css/styles.css").toExternalForm());
         detailStage.setScene(scene);
         detailStage.show();
     }
@@ -128,21 +123,28 @@ public class PersonDetailView {
         bookStage.setTitle("Детали книги");
         
         GridPane grid = new GridPane();
+        grid.getStyleClass().add("book-detail-grid");
         grid.setHgap(10);
         grid.setVgap(10);
         grid.setPadding(new Insets(20));
 
         grid.add(new Label("Название:"), 0, 0);
-        grid.add(new Label(book.getName()), 1, 0);
+        Label nameLabel = new Label(book.getName());
+        nameLabel.getStyleClass().add("book-detail-value");
+        grid.add(nameLabel, 1, 0);
         
         grid.add(new Label("Автор:"), 0, 1);
-        grid.add(new Label(book.getAuthor()), 1, 1);
+        Label authorLabel = new Label(book.getAuthor());
+        authorLabel.getStyleClass().add("book-detail-value");
+        grid.add(authorLabel, 1, 1);
         
         grid.add(new Label("Год:"), 0, 2);
-        grid.add(new Label(String.valueOf(book.getYear())), 1, 2);
+        Label yearLabel = new Label(String.valueOf(book.getYear()));
+        yearLabel.getStyleClass().add("book-detail-value");
+        grid.add(yearLabel, 1, 2);
 
         Button returnBtn = new Button("Вернуть книгу");
-        returnBtn.setStyle("-fx-font-size: 14px; -fx-background-color: #ff4444; -fx-text-fill: white;");
+        returnBtn.getStyleClass().add("return-button");
         returnBtn.setOnAction(e -> {
             if (bookService.returnBook(book.getId())) {
                 refreshBooks();
@@ -155,14 +157,15 @@ public class PersonDetailView {
         grid.add(returnBtn, 1, 3);
 
         Scene scene = new Scene(grid);
+        scene.getStylesheets().add(getClass().getResource("/css/styles.css").toExternalForm());
         bookStage.setScene(scene);
         bookStage.show();
     }
 
     private void refreshBooks() {
-        refreshBooksTable(); // 
+        refreshBooksTable();
         if (onUpdate != null) {
-            onUpdate.run(); // 
+            onUpdate.run();
         }
     }
 
@@ -181,7 +184,7 @@ public class PersonDetailView {
             if (response == ButtonType.OK) {
                 if (personService.deletePerson(person.getId())) {
                     onUpdate.run();
-                    detailStage.close(); 
+                    detailStage.close();
                 } else {
                     new Alert(Alert.AlertType.ERROR, "Ошибка при удалении читателя").show();
                 }
@@ -196,12 +199,15 @@ public class PersonDetailView {
         stage.setMinWidth(400);
 
         GridPane grid = new GridPane();
+        grid.getStyleClass().add("edit-form-grid");
         grid.setHgap(10);
         grid.setVgap(10);
         grid.setPadding(new Insets(20));
 
         TextField nameField = new TextField(person.getFullName());
+        nameField.getStyleClass().add("edit-field");
         TextField yearField = new TextField(String.valueOf(person.getBirthYear()));
+        yearField.getStyleClass().add("edit-field");
 
         grid.add(new Label("ФИО:"), 0, 0);
         grid.add(nameField, 1, 0);
@@ -209,7 +215,7 @@ public class PersonDetailView {
         grid.add(yearField, 1, 1);
 
         Button saveBtn = new Button("Сохранить");
-        saveBtn.setStyle("-fx-font-size: 14px;");
+        saveBtn.getStyleClass().add("save-button");
         saveBtn.setOnAction(e -> {
             try {
                 person.setFullName(nameField.getText());
@@ -233,6 +239,7 @@ public class PersonDetailView {
         grid.add(saveBtn, 1, 2);
 
         Scene scene = new Scene(grid);
+        scene.getStylesheets().add(getClass().getResource("/css/styles.css").toExternalForm());
         stage.setScene(scene);
         stage.show();
     }

@@ -1,5 +1,4 @@
 package io.github.zufarm.library.view;
-
 import io.github.zufarm.library.util.JwtTokenUtil;
 import io.github.zufarm.library.util.SceneManager;
 import io.github.zufarm.library.view.admin.AdminPanelView;
@@ -15,7 +14,6 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 
-import java.io.IOException;
 
 public class MainView {
     private Parent view;
@@ -28,27 +26,17 @@ public class MainView {
         BorderPane root = new BorderPane();
         TabPane tabPane = new TabPane();
         
-        
         Button logoutButton = new Button("Выход");
-        logoutButton.setStyle("-fx-background-color: #ff4444; -fx-text-fill: white;");
+        logoutButton.setId("logoutButton"); 
         logoutButton.setOnAction(event -> {
-            try {
-                
-                JwtTokenUtil.clearToken();
-                
-                
-                SceneManager.switchScene(new LoginView().getView());
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            JwtTokenUtil.clearToken();
+            SceneManager.switchScene(new LoginView().getView());
         });
-        
         
         HBox topBar = new HBox();
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
         topBar.getChildren().addAll(spacer, logoutButton);
-        
         
         Tab booksTab = new Tab("Книги");
         booksTab.setClosable(false);
@@ -60,7 +48,6 @@ public class MainView {
         
         tabPane.getTabs().addAll(booksTab, readersTab);
         
-        
         if (JwtTokenUtil.getRole().equals("ROLE_ADMIN")) {
             Tab adminTab = new Tab("Администрирование");
             adminTab.setClosable(false);
@@ -68,9 +55,9 @@ public class MainView {
             tabPane.getTabs().add(adminTab);
         }
         
-       
         root.setTop(topBar);
         root.setCenter(tabPane);
+        root.getStylesheets().add(getClass().getResource("/css/styles.css").toExternalForm());
         
         view = root;
     }

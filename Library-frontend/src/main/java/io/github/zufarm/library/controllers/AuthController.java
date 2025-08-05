@@ -1,43 +1,64 @@
 package io.github.zufarm.library.controllers;
+
 import io.github.zufarm.library.dto.LoginRequest;
 import io.github.zufarm.library.dto.LoginResponse;
 import io.github.zufarm.library.services.AuthService;
 import io.github.zufarm.library.util.JwtTokenUtil;
 import io.github.zufarm.library.util.SceneManager;
 import io.github.zufarm.library.view.MainView;
-import javafx.fxml.FXML;
 import javafx.scene.control.*;
 
 public class AuthController {
-    @FXML private TextField usernameField;
-    @FXML private PasswordField passwordField;
-    @FXML private Label errorLabel;
-    
-    private final AuthService authService = new AuthService();
-    
-    @FXML
+    private TextField usernameField;
+    private PasswordField passwordField;
+    private Label errorLabel;
+    private final AuthService authService;
+
+    public AuthController() {
+        this.authService = new AuthService();
+    }
+
+    public void setup(TextField usernameField, 
+                    PasswordField passwordField, 
+                    Label errorLabel,
+                    Button loginButton) {
+        
+        this.usernameField = usernameField;
+        this.passwordField = passwordField;
+        this.errorLabel = errorLabel;
+        
+        loginButton.setOnAction(e -> handleLogin());
+        passwordField.setOnAction(e -> handleLogin());
+    }
+
     private void handleLogin() {
         String username = usernameField.getText().trim();
         String password = passwordField.getText().trim();
         
         if (username.isEmpty() || password.isEmpty()) {
-            errorLabel.setText("Логин и пароль обязательны");
+            showError("Логин и пароль обязательны");
             return;
         }
         
         try {
-        	LoginRequest loginRequest = new LoginRequest(username, password);
-            LoginResponse response = authService.login(loginRequest);
-            JwtTokenUtil.initValues(response);
-            if (response != null && response.getToken() != null) {
-            	
-                SceneManager.switchScene(new MainView().getView());
-            } else {
-                errorLabel.setText("Неверный логин или пароль");
+            LoginRequest request = new LoginRequest(username, password);
+            LoginResponse response = authService.authenticate(request);
+            
+            if (response == null || response.getToken() == null) {
+                showError("Неверный логин или пароль");
+                return;
             }
+            
+            JwtTokenUtil.initValues(response);
+            SceneManager.switchScene(new MainView().getView());
+            
         } catch (Exception e) {
-            errorLabel.setText("Ошибка соединения с сервером");
+            showError("Ошибка соединения с сервером");
             e.printStackTrace();
         }
+    }
+
+    private void showError(String message) {
+        errorLabel.setText(message);
     }
 }
