@@ -1,13 +1,16 @@
 package io.github.zufarm.library.view.person;
+
 import io.github.zufarm.library.services.PersonService;
 import io.github.zufarm.library.dto.PersonDTO;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
+import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -16,6 +19,8 @@ public class PersonListView {
     private final PersonService personService = new PersonService();
     private final TableView<PersonDTO> table = new TableView<>();
     private final ObservableList<PersonDTO> people = FXCollections.observableArrayList();
+    private final FilteredList<PersonDTO> filteredPeople = new FilteredList<>(people);
+    private TextField searchField;
     
     public PersonListView() {
         initializeTable();
@@ -30,7 +35,7 @@ public class PersonListView {
         birthYearCol.setCellValueFactory(new PropertyValueFactory<>("birthYear"));
         
         table.getColumns().addAll(fullNameCol, birthYearCol);
-        table.setItems(people);
+        table.setItems(filteredPeople);
         table.setRowFactory(tv -> {
             TableRow<PersonDTO> row = new TableRow<>();
             row.setOnMouseClicked(event -> {
@@ -46,6 +51,9 @@ public class PersonListView {
     private void loadPeople() {
         try {
             people.setAll(personService.getAllPeople());
+            if (searchField != null) {
+                searchField.setText("");
+            }
         } catch (Exception e) {
             e.printStackTrace();
             people.clear();
@@ -56,6 +64,20 @@ public class PersonListView {
         VBox layout = new VBox(10);
         layout.setStyle("-fx-padding: 20;");
         
+        searchField = new TextField();
+        searchField.setPromptText("Поиск по имени...");
+        searchField.setPrefWidth(200);
+        searchField.setMaxWidth(200);
+        searchField.textProperty().addListener((observable, oldValue, newValue) -> {
+            filteredPeople.setPredicate(person -> {
+                if (newValue == null || newValue.isEmpty()) {
+                    return true;
+                }
+                String lowerCaseFilter = newValue.toLowerCase();
+                return person.getFullName().toLowerCase().contains(lowerCaseFilter);
+            });
+        });
+        
         Button refreshBtn = new Button("Обновить");
         refreshBtn.setOnAction(e -> loadPeople());
         
@@ -63,10 +85,11 @@ public class PersonListView {
         addPersonBtn.setOnAction(e -> {
             new PersonAddView().showForm(this::loadPeople);
         });
+        
         HBox buttonPanel = new HBox(10);
         buttonPanel.getChildren().addAll(refreshBtn, addPersonBtn);
         
-        layout.getChildren().addAll(table, buttonPanel);
+        layout.getChildren().addAll(searchField, table, buttonPanel);
         return layout;
     }
 }
