@@ -1,4 +1,5 @@
 package io.github.zufarm.library.models;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import jakarta.persistence.CascadeType;
@@ -9,8 +10,6 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
@@ -29,13 +28,14 @@ public class Person {
     @Pattern(regexp = "^[А-ЯЁ][а-яё]+(?:[- ][А-ЯЁ][а-яё]+)* [А-ЯЁ][а-яё]+(?: [А-ЯЁ][а-яё]+)?$", message = "ФИО содержит недопустимые символы")
 	private String fullName;
 	
-	@Column(name = "birth_year")
-	@Min(value = 1900, message = "Год рождения должен быть не меньше 1900")
-    @Max(value = 2025, message = "Год рождения должен быть не больше 2025")
-	private int birthYear;
-	
 	@OneToMany(mappedBy = "bookHolder", cascade = {CascadeType.PERSIST, CascadeType.MERGE} )
 	private List<Book> books = new ArrayList<>();
+	
+	@Column(name = "phone_number")
+	private String phoneNumber;
+	
+	@Column(name = "birth_date")
+	private LocalDate birthDate;
 	
 	public List<Book> getBooks() {
 		return books;
@@ -55,20 +55,28 @@ public class Person {
 	public void setFullName(String fullName) {
 		this.fullName = fullName;
 	}
-	public int getBirthYear() {
-		return birthYear;
-	}
-	public void setBirthYear(int birthYear) {
-		this.birthYear = birthYear;
-	}
+	
 	public Person() {
 		
 	}
-	public Person(String fullName, int birthYear) {
+	public Person(String fullName, String phoneNumber, LocalDate birthDate) {
 		this.fullName = fullName;
-		this.birthYear = birthYear;
+		this.phoneNumber = phoneNumber;
+		this.birthDate = birthDate;
 	}
 	
+	public String getPhoneNumber() {
+		return phoneNumber;
+	}
+	public void setPhoneNumber(String phoneNumber) {
+		this.phoneNumber = phoneNumber;
+	}
+	public LocalDate getBirthDate() {
+		return birthDate;
+	}
+	public void setBirthDate(LocalDate birthDate) {
+		this.birthDate = birthDate;
+	}
 	public void addBook(Book book) {
 		books.add(book);
 		book.setBookHolder(this);
@@ -78,5 +86,11 @@ public class Person {
 		books.remove(book);
 		book.setBookHolder(null);
 	}
+	@Override
+	public String toString() {
+		return "Person [id=" + id + ", fullName=" + fullName + ", books=" + books + ", phoneNumber=" + phoneNumber
+				+ ", birthDate=" + birthDate + "]";
+	}
+	
 	
 }

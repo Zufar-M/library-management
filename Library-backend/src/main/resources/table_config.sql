@@ -27,6 +27,27 @@ CREATE TABLE book (
 CREATE INDEX idx_book_name ON book(name);
 CREATE INDEX idx_book_person_id ON book(person_id);
 
+CREATE TABLE person (
+    id SERIAL PRIMARY KEY,
+    full_name VARCHAR(100) NOT NULL,
+    birth_date DATE NOT NULL CHECK (birth_date > '1900-01-01' AND birth_date <= CURRENT_DATE),
+    phone_number VARCHAR(20),
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT valid_phone_number CHECK (
+        phone_number IS NULL OR 
+        (phone_number ~ '^[0-9+\-() ]+$' AND LENGTH(phone_number) BETWEEN 5 AND 20)
+    )
+);
+
+CREATE INDEX idx_person_full_name ON person(full_name);
+CREATE INDEX idx_person_birth_date ON person(birth_date);
+
+SELECT * FROM person;
+
+
+
+
 
 
 

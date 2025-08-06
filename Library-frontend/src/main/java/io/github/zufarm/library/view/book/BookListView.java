@@ -1,5 +1,4 @@
 package io.github.zufarm.library.view.book;
-
 import io.github.zufarm.library.dto.BookDTO;
 import io.github.zufarm.library.services.BookService;
 import javafx.collections.FXCollections;

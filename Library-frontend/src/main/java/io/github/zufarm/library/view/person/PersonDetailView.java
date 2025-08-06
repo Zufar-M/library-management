@@ -1,5 +1,5 @@
 package io.github.zufarm.library.view.person;
-import java.util.List;
+
 import io.github.zufarm.library.dto.BookDTO;
 import io.github.zufarm.library.dto.PersonDTO;
 import io.github.zufarm.library.services.BookService;
@@ -10,6 +10,10 @@ import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
+import java.util.List;
 
 public class PersonDetailView {
     private final PersonService personService = new PersonService();
@@ -44,19 +48,26 @@ public class PersonDetailView {
         
         grid.getColumnConstraints().addAll(col1, col2);
 
+        DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
+        String formattedDate = person.getBirthDate().format(dateFormatter);
+
         Label nameLabel = new Label(person.getFullName());
         nameLabel.getStyleClass().add("detail-value");
-        Label yearLabel = new Label(String.valueOf(person.getBirthYear()));
-        yearLabel.getStyleClass().add("detail-value");
+        Label birthDateLabel = new Label(formattedDate);
+        birthDateLabel.getStyleClass().add("detail-value");
+        Label phoneLabel = new Label(person.getPhoneNumber() != null ? person.getPhoneNumber() : "Не указан");
+        phoneLabel.getStyleClass().add("detail-value");
 
         grid.add(new Label("ФИО:"), 0, 0);
         grid.add(nameLabel, 1, 0);
-        grid.add(new Label("Год рождения:"), 0, 1);
-        grid.add(yearLabel, 1, 1);
+        grid.add(new Label("Дата рождения:"), 0, 1);
+        grid.add(birthDateLabel, 1, 1);
+        grid.add(new Label("Телефон:"), 0, 2);
+        grid.add(phoneLabel, 1, 2);
 
         Label booksLabel = new Label("Книги на руках:");
         booksLabel.getStyleClass().add("section-title");
-        grid.add(booksLabel, 0, 2, 2, 1);
+        grid.add(booksLabel, 0, 3, 2, 1);
 
         booksTable = new TableView<>();
         booksTable.getStyleClass().add("detail-table");
@@ -92,7 +103,7 @@ public class PersonDetailView {
         scrollPane.setFitToHeight(true);
         scrollPane.getStyleClass().add("detail-scroll");
         
-        grid.add(scrollPane, 0, 3, 2, 1);
+        grid.add(scrollPane, 0, 4, 2, 1);
         GridPane.setHgrow(scrollPane, Priority.ALWAYS);
         GridPane.setVgrow(scrollPane, Priority.ALWAYS);
 
@@ -108,7 +119,7 @@ public class PersonDetailView {
         deleteBtn.setOnAction(e -> handleDelete(onUpdate));
 
         buttonBox.getChildren().addAll(editBtn, deleteBtn);
-        grid.add(buttonBox, 1, 4);
+        grid.add(buttonBox, 1, 5);
 
         Scene scene = new Scene(grid);
         scene.getStylesheets().add(getClass().getResource("/css/styles.css").toExternalForm());
@@ -205,20 +216,33 @@ public class PersonDetailView {
 
         TextField nameField = new TextField(person.getFullName());
         nameField.getStyleClass().add("edit-field");
-        TextField yearField = new TextField(String.valueOf(person.getBirthYear()));
-        yearField.getStyleClass().add("edit-field");
+
+        DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
+        TextField birthDateField = new TextField(person.getBirthDate().format(dateFormatter));
+        birthDateField.getStyleClass().add("edit-field");
+        birthDateField.setPromptText("дд.мм.гггг");
+
+        TextField phoneField = new TextField(person.getPhoneNumber());
+        phoneField.getStyleClass().add("edit-field");
+        phoneField.setPromptText("+7 XXX XXX-XX-XX");
 
         grid.add(new Label("ФИО:"), 0, 0);
         grid.add(nameField, 1, 0);
-        grid.add(new Label("Год рождения:"), 0, 1);
-        grid.add(yearField, 1, 1);
+        grid.add(new Label("Дата рождения:"), 0, 1);
+        grid.add(birthDateField, 1, 1);
+        grid.add(new Label("Телефон:"), 0, 2);
+        grid.add(phoneField, 1, 2);
 
         Button saveBtn = new Button("Сохранить");
         saveBtn.getStyleClass().add("save-button");
         saveBtn.setOnAction(e -> {
             try {
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
+                LocalDate birthDate = LocalDate.parse(birthDateField.getText(), formatter);
+                
                 person.setFullName(nameField.getText());
-                person.setBirthYear(Integer.parseInt(yearField.getText()));     
+                person.setBirthDate(birthDate);
+                person.setPhoneNumber(phoneField.getText());
                 
                 if (personService.updatePerson(person)) {
                     onUpdate.run();
@@ -226,16 +250,16 @@ public class PersonDetailView {
                     stage.close();
                     showDetail(person, onUpdate);
                 } else {
-                    new Alert(Alert.AlertType.ERROR, "Ошибка при обновлении человека").show();
+                    new Alert(Alert.AlertType.ERROR, "Ошибка при обновлении читателя").show();
                 }
-            } catch (NumberFormatException ex) {
-                new Alert(Alert.AlertType.ERROR, "Ошибка: Некорректный год рождения").show();
+            } catch (DateTimeParseException ex) {
+                new Alert(Alert.AlertType.ERROR, "Ошибка: Некорректный формат даты. Используйте дд.мм.гггг").show();
             } catch (Exception ex) {
                 new Alert(Alert.AlertType.ERROR, "Ошибка: " + ex.getMessage()).show();
             }
         });
 
-        grid.add(saveBtn, 1, 2);
+        grid.add(saveBtn, 1, 3);
 
         Scene scene = new Scene(grid);
         scene.getStylesheets().add(getClass().getResource("/css/styles.css").toExternalForm());

@@ -1,4 +1,5 @@
 package io.github.zufarm.library.view.book;
+
 import io.github.zufarm.library.dto.BookDTO;
 import io.github.zufarm.library.dto.PersonDTO;
 import io.github.zufarm.library.services.BookService;
@@ -13,6 +14,8 @@ import javafx.scene.layout.*;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.StringConverter;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 public class BookDetailView {
     private final BookService bookService = new BookService();
@@ -63,30 +66,25 @@ public class BookDetailView {
         titleLabel.getStyleClass().add("admin-form-title");
         grid.add(titleLabel, 0, 0, 2, 1);
 
-        
         Label nameLabel = new Label(book.getName());
         nameLabel.getStyleClass().add("book-detail-label");
         grid.add(new Label("Название:"), 0, 1);
         grid.add(nameLabel, 1, 1);
-        
         
         Label authorLabel = new Label(book.getAuthor());
         authorLabel.getStyleClass().add("book-detail-label");
         grid.add(new Label("Автор:"), 0, 2);
         grid.add(authorLabel, 1, 2);
         
-        
         Label yearLabel = new Label(String.valueOf(book.getYear()));
         yearLabel.getStyleClass().add("book-detail-label");
         grid.add(new Label("Год:"), 0, 3);
         grid.add(yearLabel, 1, 3);
         
-        
         Label genreLabel = new Label(book.getGenre() != null ? book.getGenre() : "Не указан");
         genreLabel.getStyleClass().add("book-detail-label");
         grid.add(new Label("Жанр:"), 0, 4);
         grid.add(genreLabel, 1, 4);
-        
         
         Label languageLabel = new Label(book.getLanguage() != null ? book.getLanguage() : "Russian");
         languageLabel.getStyleClass().add("book-detail-label");
@@ -111,7 +109,10 @@ public class BookDetailView {
             PersonDTO assignedPerson = personService.getBookHolder(book.getId());
             
             if (assignedPerson != null) {
-                Label personLabel = new Label(assignedPerson.getFullName() + " (" + assignedPerson.getBirthYear() + ")");
+                DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
+                String formattedDate = assignedPerson.getBirthDate().format(dateFormatter);
+                
+                Label personLabel = new Label(assignedPerson.getFullName() + " (" + formattedDate + ")");
                 personLabel.getStyleClass().add("book-detail-label");
                 grid.add(personLabel, 1, 6);
                 
@@ -131,7 +132,11 @@ public class BookDetailView {
                 personCombo.setConverter(new StringConverter<PersonDTO>() {
                     @Override
                     public String toString(PersonDTO person) {
-                        return person != null ? person.getFullName() + " (" + person.getBirthYear() + ")" : "Не выдана";
+                        if (person == null) {
+                            return "Не выдана";
+                        }
+                        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
+                        return person.getFullName() + " (" + person.getBirthDate().format(formatter) + ")";
                     }
 
                     @Override
@@ -150,8 +155,11 @@ public class BookDetailView {
                         }
                         
                         String lowerCaseFilter = newValue.toLowerCase();
+                        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
+                        String formattedDate = person.getBirthDate().format(formatter);
+                        
                         return person.getFullName().toLowerCase().contains(lowerCaseFilter) || 
-                               String.valueOf(person.getBirthYear()).contains(lowerCaseFilter);
+                               formattedDate.contains(lowerCaseFilter);
                     });
                 });
                 
@@ -237,31 +245,26 @@ public class BookDetailView {
         editGrid.setVgap(10);
         editGrid.setPadding(new Insets(20));
 
-        
         TextField nameField = new TextField(book.getName());
         nameField.getStyleClass().add("admin-field");
         editGrid.add(new Label("Название:"), 0, 0);
         editGrid.add(nameField, 1, 0);
 
-        
         TextField authorField = new TextField(book.getAuthor());
         authorField.getStyleClass().add("admin-field");
         editGrid.add(new Label("Автор:"), 0, 1);
         editGrid.add(authorField, 1, 1);
 
-        
         TextField yearField = new TextField(String.valueOf(book.getYear()));
         yearField.getStyleClass().add("admin-field");
         editGrid.add(new Label("Год:"), 0, 2);
         editGrid.add(yearField, 1, 2);
 
-        
         TextField genreField = new TextField(book.getGenre());
         genreField.getStyleClass().add("admin-field");
         editGrid.add(new Label("Жанр:"), 0, 3);
         editGrid.add(genreField, 1, 3);
 
-        
         TextField languageField = new TextField(book.getLanguage());
         languageField.getStyleClass().add("admin-field");
         editGrid.add(new Label("Язык:"), 0, 4);

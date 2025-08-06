@@ -3,8 +3,15 @@ import io.github.zufarm.library.dto.PersonDTO;
 import io.github.zufarm.library.util.JwtTokenUtil;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
+import org.springframework.http.converter.HttpMessageConverter;
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+
 import java.util.List;
 
 public class PersonService {
@@ -13,8 +20,29 @@ public class PersonService {
     private static final String EDIT_PERSON_URL = "http://localhost:8080/library/people/edit/";
     private static final String DELETE_PERSON_URL = "http://localhost:8080/library/people/delete/";
     private static final String GET_BOOKHOLDER_URL = "http://localhost:8080/library/people/bookholder/";
-    private final RestTemplate restTemplate = new RestTemplate();
+    private final RestTemplate restTemplate;
    
+    public PersonService() {
+        this.restTemplate = createRestTemplate();
+    }
+    
+    private RestTemplate createRestTemplate() {
+        RestTemplate restTemplate = new RestTemplate();
+        
+        
+        ObjectMapper objectMapper = new ObjectMapper()
+            .registerModule(new JavaTimeModule())
+            .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+        
+        List<HttpMessageConverter<?>> converters = restTemplate.getMessageConverters();
+        for (HttpMessageConverter<?> converter : converters) {
+            if (converter instanceof MappingJackson2HttpMessageConverter) {
+                ((MappingJackson2HttpMessageConverter) converter).setObjectMapper(objectMapper);
+            }
+        }
+        return restTemplate;
+    }
+    
     public List<PersonDTO> getAllPeople() {
         try {
             HttpHeaders headers = new HttpHeaders();
