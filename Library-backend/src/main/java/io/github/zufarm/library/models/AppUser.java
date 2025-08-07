@@ -2,22 +2,26 @@ package io.github.zufarm.library.models;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 @Entity
-@Table(name = "App_user")
+@Table(name = "app_user")
 public class AppUser {
 	    @Id
 	    @Column(name = "id")
 	    @GeneratedValue(strategy = GenerationType.IDENTITY)
 	    private int id;
 
-	    @NotEmpty(message = "Имя не должно быть пустым")
-	    @Size(min = 3, max = 50, message = "Имя должно быть от 3 до 50 символов длиной")
-	    @Column(name = "username")
+	    @NotBlank(message = "Имя пользователя не может быть пустым")
+	    @Size(min = 3, max = 50, message = "Имя пользователя должно быть от 3 до 50 символов")
+	    @Column(nullable = false, unique = true)
 	    private String username;
 
-	    @Column(name = "password")
+	    @NotBlank(message = "Пароль не может быть пустым")
+	    @Size(min = 8, max = 100, message = "Пароль должен быть от 8 до 100 символов")
+	    @Column(nullable = false)
 	    private String password;
-	    
-	    @Column(name = "role")
+
+	    @NotBlank(message = "Роль не может быть пустой")
+	    @Pattern(regexp = "ROLE_USER|ROLE_ADMIN", message = "Роль должна быть либо USER, либо ADMIN")
+	    @Column(nullable = false)
 	    private String role;
 
 	    public String getRole() {

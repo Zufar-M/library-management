@@ -1,10 +1,8 @@
 package io.github.zufarm.library.util;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
-
 import io.github.zufarm.library.models.AppUser;
 import io.github.zufarm.library.services.AppUserService;
 

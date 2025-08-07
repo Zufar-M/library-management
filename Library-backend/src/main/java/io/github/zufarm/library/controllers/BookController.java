@@ -36,29 +36,37 @@ public class BookController {
 		this.bookValidator = bookValidator;
 	}
 
-	@GetMapping()
-	public List<BookDTO> getAllBooks() {
-        return bookService.convertToBookListDTO(bookService.findAll());
+	@GetMapping
+    public ResponseEntity<List<BookDTO>> getAllBooks() {
+        return ResponseEntity.ok(bookService.convertToBookListDTO(bookService.findAll()));
     }
 	
 	@PostMapping("/new")
     public ResponseEntity<?> newBook(@RequestBody @Valid BookDTO bookDTO, BindingResult bindingResult ) {
 		Book book = bookService.convertToBook(bookDTO);
+		bookValidator.validate(book, bindingResult);
+		if (bindingResult.hasErrors()) {
+			return ResponseEntity.badRequest().body(bindingResult.getAllErrors());
+        } 
 		bookService.save(book);
-        return ResponseEntity.status(HttpStatus.CREATED).body("Книга успешно создана");
+		return ResponseEntity.status(HttpStatus.CREATED).body(book);
     }
 	
 	@PutMapping("/edit/{id}")
     public ResponseEntity<?> updateBook(@RequestBody @Valid BookDTO bookDTO, BindingResult bindingResult, @PathVariable("id") int id) {
 		Book book = bookService.convertToBook(bookDTO);
+		bookValidator.validate(book, bindingResult);
+		if (bindingResult.hasErrors()) {
+			return ResponseEntity.badRequest().body(bindingResult.getAllErrors());
+        } 
 		bookService.update(id, book);
-        return ResponseEntity.ok("Книга обновлена");
+		return ResponseEntity.ok(book);
     }
 	
 	@DeleteMapping("/delete/{id}")
     public ResponseEntity<String> delete(@PathVariable("id") int id) {
 	        bookService.delete(id);
-	        return ResponseEntity.ok().build();
+	        return ResponseEntity.noContent().build();
     }
 	
 	@PostMapping("/assign")
@@ -79,9 +87,6 @@ public class BookController {
 	public ResponseEntity<List<BookDTO>> getBooksByHolder(@PathVariable int personId) {
 	    Person person = peopleService.findOne(personId);
 	    List<BookDTO> personBooks = bookService.convertToBookListDTO(person.getBooks());
-	    if (personBooks == null) {
-	    	ResponseEntity.notFound().build();
-	    }
 	    return ResponseEntity.ok(personBooks);
 	}
 	

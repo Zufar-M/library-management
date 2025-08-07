@@ -10,6 +10,7 @@ import jakarta.persistence.Table;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 @Entity
@@ -21,27 +22,28 @@ public class Book {
 	@Column(name = "id")
 	private int id;
 	
-	@Column(name = "name")
 	@NotBlank(message = "Название книги не может быть пустым")
-	@Size(min = 1, max = 100, message = "Название книги должно быть от 1 до 100 символов")
-	private String name;
-	
-	@Column(name = "author")
-	@NotBlank(message = "Поле автор не может быть пустым")
-	@Size(min = 1, max = 100, message = "Имя автора должно быть от 1 до 100 символов")
-	private String author;
-	
-	@Column(name = "year")
-	@Min(value = 1000, message = "Год издания должен быть не меньше 1000")
-    @Max(value = 2100, message = "Год издания должен быть не больше 2100")
-	private int year;
-	
-	@Column(name = "genre")
-	private String genre;
-	
-	@Column(name = "language")
-	private String language;
-	
+    @Size(max = 255, message = "Название книги не должно превышать 255 символов")
+    @Column(nullable = false)
+    private String name;
+    
+    @NotBlank(message = "Автор не может быть пустым")
+    @Size(max = 255, message = "Имя автора не должно превышать 255 символов")
+    @Column(nullable = false)
+    private String author;
+    
+    @NotNull(message = "Год издания обязателен")
+    @Min(value = 1, message = "Год издания должен быть положительным числом")
+    @Max(value = 2100, message = "Год издания не может быть больше 2100")
+    @Column(nullable = false)
+    private Integer year;
+    
+    @Size(max = 100, message = "Жанр не должен превышать 100 символов")
+    private String genre;
+    
+    @Size(max = 50, message = "Язык не должен превышать 50 символов")
+    private String language = "Russian";	
+    
 	@ManyToOne
 	@JoinColumn(name = "person_id", referencedColumnName = "id", nullable = true)
 	private Person bookHolder;

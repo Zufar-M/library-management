@@ -1,16 +1,12 @@
 package io.github.zufarm.library.config;
-
 import java.io.IOException;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
-
 import com.auth0.jwt.exceptions.JWTVerificationException;
-
 import io.github.zufarm.library.security.JWTUtil;
 import io.github.zufarm.library.services.AppUserDetailsService;
 import jakarta.servlet.FilterChain;
@@ -29,8 +25,6 @@ public class JWTFilter extends OncePerRequestFilter{
 		this.jwtUtil = jwtUtil;
 		this.appUserDetailsService = appUserDetailsService;
 	}
-
-
 
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)

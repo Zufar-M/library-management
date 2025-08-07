@@ -1,12 +1,9 @@
 package io.github.zufarm.library.security;
-
 import java.util.Collection;
 import java.util.Collections;
-
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-
 import io.github.zufarm.library.models.AppUser;
 
 public class AppUserDetails implements UserDetails{
@@ -24,13 +21,11 @@ public class AppUserDetails implements UserDetails{
 
 	@Override
 	public String getPassword() {
-		// TODO Auto-generated method stub
 		return appUser.getPassword();
 	}
 
 	@Override
 	public String getUsername() {
-		// TODO Auto-generated method stub
 		return appUser.getUsername();
 	}
 

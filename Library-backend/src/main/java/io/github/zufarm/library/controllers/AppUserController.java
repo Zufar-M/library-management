@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import io.github.zufarm.library.dto.AppUserDTO;
 import io.github.zufarm.library.models.AppUser;
 import io.github.zufarm.library.services.AppUserService;
+import io.github.zufarm.library.util.AppUserValidator;
 import jakarta.validation.Valid;
 
 @RestController
@@ -20,27 +21,37 @@ import jakarta.validation.Valid;
 public class AppUserController {
 	
 	private final AppUserService appUserService;
+	private final AppUserValidator appUserValidator;
 	
 	@Autowired
-	public AppUserController(AppUserService appUserService) {
+	public AppUserController(AppUserService appUserService,
+							AppUserValidator appUserValidator) {
 		this.appUserService = appUserService;
+		this.appUserValidator = appUserValidator;
 	}
 	
 	@GetMapping
-	public List<AppUserDTO> getAllAppUsers() {
-		return appUserService.convertToAppUserDTOList(appUserService.findAll());
-	}
+    public ResponseEntity<List<AppUserDTO>> getAllAppUsers() {
+        List<AppUserDTO> users = appUserService.convertToAppUserDTOList(appUserService.findAll());
+        return ResponseEntity.ok(users);
+    }
 	
 	@PutMapping("/edit/{id}")
-    public ResponseEntity<?> updateAppUser(@RequestBody @Valid AppUserDTO appUserDTO, BindingResult bindingResult, @PathVariable("id") int id) {
+    public ResponseEntity<?> updateAppUser(@RequestBody @Valid AppUserDTO appUserDTO,
+    													BindingResult bindingResult, 
+    													@PathVariable("id") int id){
 		AppUser appUser = appUserService.convertToAppUser(appUserDTO);
-		appUserService.update(id, appUser);
-        return ResponseEntity.ok("Читатель обновлен");
+		appUserValidator.validate(appUser, bindingResult);
+		if (bindingResult.hasErrors()) {
+			return ResponseEntity.badRequest().body(bindingResult.getAllErrors());
+        } 
+            appUserService.update(id, appUser);
+            return ResponseEntity.ok(appUser);
     }
 	
 	@DeleteMapping("/delete/{id}")
     public ResponseEntity<String> delete(@PathVariable("id") int id) {
 	        appUserService.delete(id);
-	        return ResponseEntity.ok().build();
+	        return ResponseEntity.noContent().build();
     }
 }

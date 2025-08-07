@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import io.github.zufarm.library.dto.PersonDTO;
 import io.github.zufarm.library.models.Person;
 import io.github.zufarm.library.services.PeopleService;
+import io.github.zufarm.library.util.PersonValidator;
 import jakarta.validation.Valid;
 
 @RestController
@@ -22,48 +23,50 @@ import jakarta.validation.Valid;
 public class PersonController {
 	
 	private final PeopleService peopleService;
+	private final PersonValidator personValidator;
 	
 	@Autowired
-	public PersonController(PeopleService peopleService) {
+	public PersonController(PeopleService peopleService, PersonValidator personValidator) {
 		this.peopleService = peopleService;
+		this.personValidator = personValidator;
 	}
 
-	@GetMapping()
-	public List<PersonDTO> getAllPeople() {
-		return peopleService.convertToListPersonDTO(peopleService.findAll());
+	@GetMapping
+    public ResponseEntity<List<PersonDTO>> getAllPeople() {
+        return ResponseEntity.ok(peopleService.convertToListPersonDTO(peopleService.findAll()));
     }
 	
 	@PostMapping("/new")
     public ResponseEntity<?> newPerson(@RequestBody @Valid PersonDTO personDTO, BindingResult bindingResult ) {
 		Person person = peopleService.convertToPerson(personDTO);
+		personValidator.validate(person, bindingResult);
+		if (bindingResult.hasErrors()) {
+			return ResponseEntity.badRequest().body(bindingResult.getAllErrors());
+        } 
 		peopleService.save(person);
-        return ResponseEntity.status(HttpStatus.CREATED).body("Читатель успешно добавлен");
+        return ResponseEntity.status(HttpStatus.CREATED).body(person);
     }
 	
 	@GetMapping("/bookholder/{id}")
 	public ResponseEntity<?> getBookHolder(@PathVariable("id") int bookId) {
 	        Person holder = peopleService.getBookHolder(bookId);
-	        if (holder == null) {
-	        	return ResponseEntity.notFound().build();
-	        }
 	        return ResponseEntity.ok(peopleService.convertToPersonDTO(holder));
 	}
 	
 	@PutMapping("/edit/{id}")
     public ResponseEntity<?> updatePerson(@RequestBody @Valid PersonDTO personDTO, BindingResult bindingResult, @PathVariable("id") int id) {
 		Person person = peopleService.convertToPerson(personDTO);
+		personValidator.validate(person, bindingResult);
+		if (bindingResult.hasErrors()) {
+			return ResponseEntity.badRequest().body(bindingResult.getAllErrors());
+        } 
 		peopleService.update(id, person);
-        return ResponseEntity.ok("Читатель обновлен");
+        return ResponseEntity.ok(person);
     }
 	
 	@DeleteMapping("/delete/{id}")
     public ResponseEntity<String> delete(@PathVariable("id") int id) {
-		try {
 	        peopleService.delete(id);
-	        return ResponseEntity.ok("Читатель успешно удален!");
-	    } catch (Exception e) {
-	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-	               .body("Ошибка при удалении читателя!");
-	    }
+	        return ResponseEntity.noContent().build();
     }
 }

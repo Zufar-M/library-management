@@ -2,14 +2,13 @@ package io.github.zufarm.library.services;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-
 import org.hibernate.Hibernate;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import io.github.zufarm.library.dto.BookDTO;
+import io.github.zufarm.library.exceptions.BookNotFoundException;
 import io.github.zufarm.library.models.Book;
 import io.github.zufarm.library.models.Person;
 import io.github.zufarm.library.repositories.BookRepository;
@@ -34,13 +33,9 @@ private final ModelMapper modelMapper;
 	}
 	
 	public Book findOne(int id) {
-		Optional<Book> foundBook = bookRepository.findById(id);
-		if (foundBook.isPresent()) {
-	        Book book = foundBook.get();
-	        Hibernate.initialize(book.getBookHolder());
-	        return book;
-	    }
-	    return null;
+		Book foundBook = bookRepository.findById(id).orElseThrow(() -> new BookNotFoundException(id));
+	        Hibernate.initialize(foundBook.getBookHolder());
+	        return foundBook;
 	}
 
 	@Transactional
@@ -50,6 +45,9 @@ private final ModelMapper modelMapper;
 	
 	@Transactional
 	public void update(int id, Book updatedBook) {
+		if (!bookRepository.existsById(id)) {
+			throw new BookNotFoundException(id);
+		}
 		updatedBook.setId(id);
 		updatedBook.setBookHolder(peopleService.getBookHolder(id));
 		bookRepository.save(updatedBook);
@@ -57,6 +55,9 @@ private final ModelMapper modelMapper;
 	
 	@Transactional
 	public void delete(int id) {
+		if (!bookRepository.existsById(id)) {
+			throw new BookNotFoundException(id);
+		}
 		bookRepository.deleteById(id);
 	}
 	

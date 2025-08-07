@@ -11,16 +11,13 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-
 import io.github.zufarm.library.services.AppUserDetailsService;
-
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
 
 private final AppUserDetailsService appUserDetailsService;
-
 private final JWTFilter jwtFilter;
 	
 	@Autowired
@@ -33,7 +30,7 @@ private final JWTFilter jwtFilter;
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
             	.authorizeHttpRequests(auth -> auth
-            	.requestMatchers("/auth/login", "/error", "/auth/registration").permitAll() 
+            	.requestMatchers("/auth/login").permitAll() 
             	.requestMatchers("/admin").hasRole("ADMIN")   	
                 .anyRequest().hasAnyRole("USER", "ADMIN")
             	)

@@ -43,7 +43,6 @@ CREATE TABLE person (
 CREATE INDEX idx_person_full_name ON person(full_name);
 CREATE INDEX idx_person_birth_date ON person(birth_date);
 
-SELECT * FROM person;
 
 
 

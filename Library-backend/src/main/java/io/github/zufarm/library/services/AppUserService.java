@@ -1,20 +1,16 @@
 package io.github.zufarm.library.services;
-
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import io.github.zufarm.library.dto.AppUserDTO;
-import io.github.zufarm.library.dto.BookDTO;
+import io.github.zufarm.library.exceptions.UserNotFoundException;
 import io.github.zufarm.library.models.AppUser;
-import io.github.zufarm.library.models.Book;
 import io.github.zufarm.library.repositories.AppUserRepository;
-import io.github.zufarm.library.util.AppUserNotFoundException;
 
 @Service
 @Transactional(readOnly = true)
@@ -46,26 +42,24 @@ public class AppUserService {
 	}
 	
 	public AppUser findById(int id) {
-		return appUserRepository.findById(id).orElseThrow(AppUserNotFoundException::new);
-	}
+		return appUserRepository.findById(id).orElseThrow(() -> new UserNotFoundException(id));
+}
+	
 	
 	@Transactional
 	public void delete(int id) {
-		appUserRepository.deleteById(id);;
+		if (!appUserRepository.existsById(id)) {
+	        throw new UserNotFoundException(id);
+	    }
+		appUserRepository.deleteById(id);
 	}
 	
-	public AppUser convertToAppUser(AppUserDTO appUserDTO) {
-		if (appUserDTO.getRole().equals("Администратор")) {
-			appUserDTO.setRole("ROLE_ADMIN");
-		}
-		else {
-			appUserDTO.setRole("ROLE_USER");
-		}
-		return this.modelMapper.map(appUserDTO, AppUser.class);
-	}
 	
 	@Transactional
 	public void update(int id, AppUser appUserToUpdate) {
+		if (!appUserRepository.existsById(id)) {
+	        throw new UserNotFoundException(id);
+	    }
 		appUserToUpdate.setId(id);
 		appUserToUpdate.setPassword(passwordEncoder.encode(appUserToUpdate.getPassword()));
 		appUserRepository.save(appUserToUpdate);
@@ -83,6 +77,16 @@ public class AppUserService {
 		            return dto;
 		        })
 		        .collect(Collectors.toList());
+	}
+	
+	public AppUser convertToAppUser(AppUserDTO appUserDTO) {
+		if (appUserDTO.getRole().equals("Администратор")) {
+			appUserDTO.setRole("ROLE_ADMIN");
+		}
+		else {
+			appUserDTO.setRole("ROLE_USER");
+		}
+		return this.modelMapper.map(appUserDTO, AppUser.class);
 	}
 
 	

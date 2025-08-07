@@ -11,6 +11,8 @@ import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Past;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
@@ -22,20 +24,26 @@ public class Person {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int id;
 	
-	@Column(name = "full_name")
 	@NotBlank(message = "ФИО не может быть пустым")
     @Size(min = 3, max = 100, message = "ФИО должно быть от 3 до 100 символов")
-    @Pattern(regexp = "^[А-ЯЁ][а-яё]+(?:[- ][А-ЯЁ][а-яё]+)* [А-ЯЁ][а-яё]+(?: [А-ЯЁ][а-яё]+)?$", message = "ФИО содержит недопустимые символы")
-	private String fullName;
+    @Pattern(regexp = "^[А-ЯЁ][а-яё]+(?:[- ][А-ЯЁ][а-яё]+)* [А-ЯЁ][а-яё]+(?: [А-ЯЁ][а-яё]+)?$", 
+             message = "ФИО должно быть в формате 'Фамилия Имя Отчество' с заглавных букв")
+    @Column(name = "full_name", nullable = false)
+    private String fullName;
+    
+    @NotNull(message = "Дата рождения обязательна")
+    @Past(message = "Дата рождения должна быть в прошлом")
+    @Column(name = "birth_date", nullable = false)
+    private LocalDate birthDate;
+    
+    @Pattern(regexp = "^$|^[0-9+\\-() ]{5,20}$", 
+             message = "Номер телефона может содержать только цифры, +, -, () и пробелы (5-20 символов)")
+    @Column(name = "phone_number", length = 20)
+    private String phoneNumber;
 	
 	@OneToMany(mappedBy = "bookHolder", cascade = {CascadeType.PERSIST, CascadeType.MERGE} )
 	private List<Book> books = new ArrayList<>();
 	
-	@Column(name = "phone_number")
-	private String phoneNumber;
-	
-	@Column(name = "birth_date")
-	private LocalDate birthDate;
 	
 	public List<Book> getBooks() {
 		return books;
@@ -77,20 +85,4 @@ public class Person {
 	public void setBirthDate(LocalDate birthDate) {
 		this.birthDate = birthDate;
 	}
-	public void addBook(Book book) {
-		books.add(book);
-		book.setBookHolder(this);
-	}
-	
-	public void returnBook(Book book) {
-		books.remove(book);
-		book.setBookHolder(null);
-	}
-	@Override
-	public String toString() {
-		return "Person [id=" + id + ", fullName=" + fullName + ", books=" + books + ", phoneNumber=" + phoneNumber
-				+ ", birthDate=" + birthDate + "]";
-	}
-	
-	
 }
