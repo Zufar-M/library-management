@@ -46,12 +46,12 @@ public class AppUserController {
 			return ResponseEntity.badRequest().body(bindingResult.getAllErrors());
         } 
             appUserService.update(id, appUser);
-            return ResponseEntity.ok(appUser);
+            return ResponseEntity.ok().build();
     }
 	
 	@DeleteMapping("/delete/{id}")
     public ResponseEntity<String> delete(@PathVariable("id") int id) {
 	        appUserService.delete(id);
-	        return ResponseEntity.noContent().build();
+	        return ResponseEntity.ok().build();
     }
 }

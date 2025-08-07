@@ -58,8 +58,7 @@ public class PeopleService {
 	}
 	
 	public Person getBookHolder(int bookId) {
-        return peopleRepository.findPersonByBookId(bookId)
-        	    .orElseThrow(() -> new UserNotFoundException("Person book holder bookId :" + bookId));
+        return peopleRepository.findPersonByBookId(bookId).orElse(null);
     }
 	
 	public List<PersonDTO> convertToListPersonDTO(List<Person> people) {

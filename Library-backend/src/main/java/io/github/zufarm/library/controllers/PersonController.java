@@ -50,6 +50,9 @@ public class PersonController {
 	@GetMapping("/bookholder/{id}")
 	public ResponseEntity<?> getBookHolder(@PathVariable("id") int bookId) {
 	        Person holder = peopleService.getBookHolder(bookId);
+	        if (holder == null) {
+	            return ResponseEntity.ok(null);
+	        }
 	        return ResponseEntity.ok(peopleService.convertToPersonDTO(holder));
 	}
 	
@@ -61,12 +64,12 @@ public class PersonController {
 			return ResponseEntity.badRequest().body(bindingResult.getAllErrors());
         } 
 		peopleService.update(id, person);
-        return ResponseEntity.ok(person);
+        return ResponseEntity.ok().build();
     }
 	
 	@DeleteMapping("/delete/{id}")
     public ResponseEntity<String> delete(@PathVariable("id") int id) {
 	        peopleService.delete(id);
-	        return ResponseEntity.noContent().build();
+	        return ResponseEntity.ok().build();
     }
 }

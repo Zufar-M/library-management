@@ -1,6 +1,5 @@
 package io.github.zufarm.library.dto;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
 public class AppUserDTO {
@@ -16,7 +15,6 @@ public class AppUserDTO {
     private String password;
 
     @NotBlank(message = "Роль не может быть пустой")
-    @Pattern(regexp = "ROLE_USER|ROLE_ADMIN", message = "Роль должна быть либо USER, либо ADMIN")
     private String role;
 
 	public String getUsername() {
