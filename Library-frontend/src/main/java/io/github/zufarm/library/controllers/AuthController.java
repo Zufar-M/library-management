@@ -39,23 +39,15 @@ public class AuthController {
             showError("Логин и пароль обязательны");
             return;
         }
-        
-        try {
             LoginRequest request = new LoginRequest(username, password);
             LoginResponse response = authService.authenticate(request);
-            
-            if (response == null || response.getToken() == null) {
-                showError("Неверный логин или пароль");
-                return;
+            if (response.getError() != null) {
+            	showError(response.getError());
             }
-            
+            else {
             JwtTokenUtil.initValues(response);
             SceneManager.switchScene(new MainView().getView());
-            
-        } catch (Exception e) {
-            showError("Ошибка соединения с сервером");
-            e.printStackTrace();
-        }
+            }
     }
 
     private void showError(String message) {

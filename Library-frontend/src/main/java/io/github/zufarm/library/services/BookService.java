@@ -19,6 +19,8 @@ public class BookService {
     private static final String GET_BOOKS_BY_HOLDER_URL = "http://localhost:8080/library/books/holder/";
     private final RestTemplate restTemplate = new RestTemplate();
     
+    // TO-DO Spring spring boot, correct response error code handler
+    
     public List<BookDTO> getAllBooks() {
         try {
             HttpHeaders headers = new HttpHeaders();

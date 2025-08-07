@@ -22,6 +22,8 @@ public class PersonService {
     private static final String GET_BOOKHOLDER_URL = "http://localhost:8080/library/people/bookholder/";
     private final RestTemplate restTemplate;
    
+    // TO-DO Spring spring boot, response error code handler
+    
     public PersonService() {
         this.restTemplate = createRestTemplate();
     }

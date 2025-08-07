@@ -13,6 +13,8 @@ public class UserService {
     private static final String DELETE_USER_URL = "http://localhost:8080/library/users/delete/";
     private final RestTemplate restTemplate = new RestTemplate();
 
+    // TO-DO Spring spring boot, response error code handler
+    
     public void registerUser(UserDTO user) {
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "Bearer " + JwtTokenUtil.getToken());

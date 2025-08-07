@@ -1,11 +1,13 @@
 package io.github.zufarm.library.services;
-
 import io.github.zufarm.library.dto.LoginRequest;
 import io.github.zufarm.library.dto.LoginResponse;
 import org.springframework.http.*;
 import org.springframework.web.client.*;
 
 public class AuthService {
+	
+    // TO-DO Spring spring boot
+	
     private static final String AUTH_ENDPOINT = "http://localhost:8080/library/auth/login";
     private final RestTemplate restTemplate;
 
@@ -14,6 +16,7 @@ public class AuthService {
     }
 
     public LoginResponse authenticate(LoginRequest request) throws RestClientException {
+    	try {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         
@@ -26,6 +29,17 @@ public class AuthService {
             LoginResponse.class
         );
         
-        return response.getStatusCode() == HttpStatus.OK ? response.getBody() : null;
+        if (response.getStatusCode() == HttpStatus.OK) {
+        	return response.getBody();
+        }
+        else {
+        	return new LoginResponse(null, null, "Неизвестная ошибка");
+        }
+    	}
+    	catch (HttpClientErrorException e) {
+    		return new LoginResponse(null, null, e.getResponseBodyAsString());
+    	}
+    	
+       
     }
 }
