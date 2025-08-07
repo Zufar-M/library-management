@@ -60,13 +60,13 @@ public class BookController {
 			return ResponseEntity.badRequest().body(bindingResult.getAllErrors());
         } 
 		bookService.update(id, book);
-		return ResponseEntity.ok(book);
+		return ResponseEntity.ok().build();
     }
 	
 	@DeleteMapping("/delete/{id}")
     public ResponseEntity<String> delete(@PathVariable("id") int id) {
 	        bookService.delete(id);
-	        return ResponseEntity.noContent().build();
+	        return ResponseEntity.ok().build();
     }
 	
 	@PostMapping("/assign")

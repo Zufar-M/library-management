@@ -20,7 +20,6 @@ public class AppUser {
 	    private String password;
 
 	    @NotBlank(message = "Роль не может быть пустой")
-	    @Pattern(regexp = "ROLE_USER|ROLE_ADMIN", message = "Роль должна быть либо USER, либо ADMIN")
 	    @Column(nullable = false)
 	    private String role;
 

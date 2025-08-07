@@ -148,7 +148,8 @@ public class PersonService {
                 entity,
                 new ParameterizedTypeReference<PersonDTO>() {}
             );
-                return response.getBody();
+            	
+                return response.hasBody() ? response.getBody() : null;
 	        } 
 	        catch (HttpClientErrorException.NotFound e) {   
 	        	return null;
